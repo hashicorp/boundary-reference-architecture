@@ -303,4 +303,15 @@ resource "aws_security_group_rule" "allow_egress_worker" {
   security_group_id = aws_security_group.worker.id
 }
 
-
+# Example resource for connecting to through boundary over SSH
+resource "aws_instance" "backend_server" {
+  count                  = 3
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = "t3.micro"
+  subnet_id              = local.private_subnet[count.index]
+  key_name               = aws_key_pair.boundary.key_name
+  vpc_security_group_ids = [aws_security_group.worker.id]
+  tags = {
+    Name = "${var.tag}-backend-server"
+  }
+}
