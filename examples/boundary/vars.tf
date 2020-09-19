@@ -6,27 +6,27 @@ variable "url" {
 variable "backend_team" {
   type = set(string)
   default = [
-    "Jim Lambert",
-    "Mike Gaffney",
-    "Todd Knight",
+    "Jim",
+    "Mike",
+    "Todd",
   ]
 }
 
 variable "frontend_team" {
   type = set(string)
   default = [
-    "Randall Morey",
-    "Susmitha Girumala",
+    "Randall",
+    "Susmitha",
   ]
 }
 
 variable "leadership_team" {
   type = set(string)
   default = [
-    "Jeff Mitchell",
-    "Pete Pacent",
-    "Jonathan Thomas (JT)",
-    "Jeff Malnick"
+    "Jeff",
+    "Pete",
+    "Jonathan",
+    "Malnick"
   ]
 }
 

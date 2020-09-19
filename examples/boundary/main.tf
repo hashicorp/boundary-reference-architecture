@@ -14,7 +14,7 @@ kms "aead" {
 	purpose = "recovery"
 	aead_type = "aes-gcm"
 #	key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
-  key = "+jRfCT4YHzjBV+BwiujEw5JIedmPIdOObfUAHRSWTR0="
+  key = "H/F0H8fObY8kELPLPFixqE/rjAV67hevOKbMGfi2OHI="
 	key_id = "global_recovery"
 }
 EOT
@@ -78,7 +78,7 @@ resource "boundary_user" "leadership" {
 }
 
 resource "boundary_auth_method" "password" {
-  name        = "password"
+  name        = "global_password_auth_method"
   description = "Password auth method"
   type        = "password"
   scope_id    = boundary_scope.corp.id
@@ -91,7 +91,7 @@ resource "boundary_account" "backend_user_acct" {
   description    = "User account for ${each.key}"
   type           = "password"
   login_name     = each.key
-  password       = "boundary"
+  password       = "foofoofoo"
   auth_method_id = boundary_auth_method.password.id
 }
 // organiation level group for the leadership team
