@@ -8,10 +8,15 @@ terraform {
 }
 
 provider "boundary" {
-  addr                            = var.url
-  auth_method_id                  = "ampw_0000000000"
-  password_auth_method_login_name = "foo"
-  password_auth_method_password   = "foofoofoo"
+  addr             = var.url
+  recovery_kms_hcl = <<EOT
+kms "aead" {
+	purpose = "recovery"
+	aead_type = "aes-gcm"
+	key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
+	key_id = "global_recovery"
+}
+EOT
 }
 
 
@@ -41,6 +46,23 @@ resource "boundary_user" "leadership" {
   scope_id    = boundary_scope.corp.id
 }
 
+resource "boundary_auth_method" "password" {
+  name        = "password"
+  description = "Password auth method"
+  type        = "password"
+  scope_id    = boundary_scope.corp.id
+  depends_on  = [boundary_role.organization_admin]
+}
+
+resource "boundary_account" "backend_user_acct" {
+  for_each       = var.backend_team
+  name           = each.key
+  description    = "User account for ${each.key}"
+  type           = "password"
+  login_name     = each.key
+  password       = "boundary"
+  auth_method_id = boundary_auth_method.password.id
+}
 // organiation level group for the leadership team
 resource "boundary_group" "leadership" {
   name        = "leadership_team"
