@@ -119,14 +119,6 @@ resource "boundary_host_catalog" "backend_servers" {
   scope_id    = boundary_scope.core_infra.id
 }
 
-resource "boundary_host_set" "backend_servers_service" {
-  type            = "static"
-  name            = "backend_servers_service"
-  description     = "Host set for services servers"
-  host_catalog_id = boundary_host_catalog.backend_servers.id
-  host_ids        = [for host in boundary_host.backend_servers_service : host.id]
-}
-
 resource "boundary_host_set" "backend_servers_ssh" {
   type            = "static"
   name            = "backend_servers_ssh"
