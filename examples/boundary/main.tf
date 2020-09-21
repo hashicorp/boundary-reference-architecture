@@ -79,8 +79,8 @@ resource "boundary_user" "leadership" {
 }
 
 resource "boundary_auth_method" "password" {
-  name        = "global_password_auth_method"
-  description = "Password auth method"
+  name        = "corp_password_auth_method"
+  description = "Password auth method for Corp org"
   type        = "password"
   scope_id    = boundary_scope.org.id
   depends_on  = [boundary_role.corp_admin]
@@ -91,7 +91,7 @@ resource "boundary_account" "backend_user_acct" {
   name           = each.key
   description    = "User account for ${each.key}"
   type           = "password"
-  login_name     = each.key
+  login_name     = lower(each.key)
   password       = "foofoofoo"
   auth_method_id = boundary_auth_method.password.id
 }
@@ -172,11 +172,11 @@ resource "boundary_host_set" "backend_servers_ssh" {
 }
 
 resource "boundary_target" "backend_servers_ssh" {
-  type        = "tcp"
-  name        = "backend_servers_ssh"
-  description = "Backend SSH target"
-  scope_id    = boundary_scope.core_infra.id
-
+  type         = "tcp"
+  name         = "backend_servers_ssh"
+  description  = "Backend SSH target"
+  scope_id     = boundary_scope.core_infra.id
+  default_port = 22
   host_set_ids = [
     boundary_host_set.backend_servers_ssh.id
   ]
