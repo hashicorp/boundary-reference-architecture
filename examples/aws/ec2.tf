@@ -86,7 +86,7 @@ EOT
   }
 
   provisioner "file" {
-    source      = "install/install.sh"
+    source      = "${path.module}/install/install.sh"
     destination = "~/install.sh"
   }
 
@@ -148,7 +148,7 @@ controller {
 }
 
 listener "tcp" {
-  address = "0.0.0.0:9200"
+  address = "${self.private_ip}:9200"
 	purpose = "api"
 	tls_disable = true
 	# proxy_protocol_behavior = "allow_authorized"
@@ -158,7 +158,7 @@ listener "tcp" {
 }
 
 listener "tcp" {
-  address = "0.0.0.0:9201"
+  address = "${self.private_ip}:9201"
 	purpose = "cluster"
 	tls_disable = true
 	# proxy_protocol_behavior = "allow_authorized"
@@ -199,7 +199,7 @@ EOT
   }
 
   provisioner "file" {
-    source      = "install/install.sh"
+    source      = "${path.module}/install/install.sh"
     destination = "~/install.sh"
   }
 

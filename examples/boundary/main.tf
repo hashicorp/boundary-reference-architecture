@@ -13,8 +13,7 @@ provider "boundary" {
 kms "aead" {
 	purpose = "recovery"
 	aead_type = "aes-gcm"
-#	key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
-  key = "H/F0H8fObY8kELPLPFixqE/rjAV67hevOKbMGfi2OHI="
+	key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
 	key_id = "global_recovery"
 }
 EOT
@@ -39,8 +38,10 @@ resource "boundary_role" "default" {
   ]
 }
 
-resource "boundary_scope" "corp" {
-  scope_id = boundary_scope.global.id
+resource "boundary_scope" "org" {
+  scope_id    = boundary_scope.global.id
+  name        = "organization"
+  description = "Organization scope"
 }
 
 resource "boundary_role" "corp_admin" {
@@ -52,7 +53,7 @@ resource "boundary_role" "corp_admin" {
     ["u_auth"],
   )
   scope_id       = boundary_scope.global.id
-  grant_scope_id = boundary_scope.corp.id
+  grant_scope_id = boundary_scope.org.id
   grant_strings  = ["id=*;actions=*"]
 }
 
@@ -60,28 +61,28 @@ resource "boundary_user" "backend" {
   for_each    = var.backend_team
   name        = each.key
   description = "Backend user: ${each.key}"
-  scope_id    = boundary_scope.corp.id
+  scope_id    = boundary_scope.org.id
 }
 
 resource "boundary_user" "frontend" {
   for_each    = var.frontend_team
   name        = each.key
   description = "Frontend user: ${each.key}"
-  scope_id    = boundary_scope.corp.id
+  scope_id    = boundary_scope.org.id
 }
 
 resource "boundary_user" "leadership" {
   for_each    = var.leadership_team
   name        = each.key
   description = "WARNING: Managers should be read-only"
-  scope_id    = boundary_scope.corp.id
+  scope_id    = boundary_scope.org.id
 }
 
 resource "boundary_auth_method" "password" {
   name        = "global_password_auth_method"
   description = "Password auth method"
   type        = "password"
-  scope_id    = boundary_scope.corp.id
+  scope_id    = boundary_scope.org.id
   depends_on  = [boundary_role.corp_admin]
 }
 
@@ -99,7 +100,7 @@ resource "boundary_group" "leadership" {
   name        = "leadership_team"
   description = "Organization group for leadership team"
   member_ids  = [for user in boundary_user.leadership : user.id]
-  scope_id    = boundary_scope.corp.id
+  scope_id    = boundary_scope.org.id
 }
 
 // add org-level role for readonly access
@@ -108,13 +109,14 @@ resource "boundary_role" "organization_readonly" {
   description   = "Read-only role"
   principal_ids = [boundary_group.leadership.id]
   grant_strings = ["id=*;actions=read"]
-  scope_id      = boundary_scope.corp.id
+  scope_id      = boundary_scope.org.id
 }
 
 // create a project for core infrastructure
 resource "boundary_scope" "core_infra" {
-  description      = "Core infrastrcture"
-  scope_id         = boundary_scope.corp.id
+  name             = "core_infra"
+  description      = "Backend infrastrcture project"
+  scope_id         = boundary_scope.org.id
   auto_create_role = true
 }
 
@@ -122,7 +124,7 @@ resource "boundary_scope" "core_infra" {
 resource "boundary_role" "project_admin" {
   name           = "core_infra_admin"
   description    = "Administrator role for core infra"
-  scope_id       = boundary_scope.corp.id
+  scope_id       = boundary_scope.org.id
   grant_scope_id = boundary_scope.core_infra.id
   principal_ids = concat(
     [for user in boundary_user.backend : user.id],
