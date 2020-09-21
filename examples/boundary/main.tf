@@ -77,8 +77,8 @@ resource "boundary_user" "leadership" {
 }
 
 resource "boundary_auth_method" "password" {
-  name        = "global_password_auth_method"
-  description = "Password auth method"
+  name        = "corp_password_auth_method"
+  description = "Password auth method for Corp org"
   type        = "password"
   scope_id    = boundary_scope.corp.id
   depends_on  = [boundary_role.corp_admin]
