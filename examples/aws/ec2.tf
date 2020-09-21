@@ -61,7 +61,8 @@ listener "tcp" {
 }
 
 worker {
-	name = "demo worker"
+  # Name attr must be unique
+	name = "demo-worker-${count.index}"
 	description = "A default worker created demonstration"
 	controllers = [
     "${aws_instance.controller[0].private_ip}",
@@ -143,7 +144,8 @@ telemetry {
 }
 
 controller {
-  name = "demo-controller"
+  # This name attr must be unique!
+  name = "demo-controller-${count.index}"
   description = "A controller for a demo!"
 }
 

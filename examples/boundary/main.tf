@@ -20,41 +20,17 @@ EOT
 }
 
 resource "boundary_scope" "global" {
-  global_scope = true
-  name         = "global"
-  scope_id     = "global"
-}
-
-resource "boundary_role" "default" {
-  default_role   = true
-  description    = "Default role created on first instantiation of Boundary. It is meant to provide enough permissions for users to successfully authenticate via various client types."
-  grant_scope_id = "global"
-  name           = "default"
-  scope_id       = boundary_scope.global.id
-  principal_ids  = ["u_auth", "u_anon"]
-  grant_strings = [
-    "type=scope;actions=list",
-    "type=auth-method;actions=authenticate,list"
-  ]
+  global_scope     = true
+  name             = "global"
+  scope_id         = "global"
+  auto_create_role = true
 }
 
 resource "boundary_scope" "org" {
-  scope_id    = boundary_scope.global.id
-  name        = "organization"
-  description = "Organization scope"
-}
-
-resource "boundary_role" "corp_admin" {
-  name        = "admin"
-  description = "Administrator role"
-  principal_ids = concat(
-    [for user in boundary_user.backend : user.id],
-    [for user in boundary_user.frontend : user.id],
-    ["u_auth"],
-  )
-  scope_id       = boundary_scope.global.id
-  grant_scope_id = boundary_scope.org.id
-  grant_strings  = ["id=*;actions=*"]
+  scope_id         = boundary_scope.global.id
+  name             = "organization"
+  description      = "Organization scope"
+  auto_create_role = true
 }
 
 resource "boundary_user" "backend" {
@@ -83,7 +59,6 @@ resource "boundary_auth_method" "password" {
   description = "Password auth method for Corp org"
   type        = "password"
   scope_id    = boundary_scope.org.id
-  depends_on  = [boundary_role.corp_admin]
 }
 
 resource "boundary_account" "backend_user_acct" {
