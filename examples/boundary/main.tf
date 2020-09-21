@@ -90,7 +90,7 @@ resource "boundary_account" "backend_user_acct" {
   name           = each.key
   description    = "User account for ${each.key}"
   type           = "password"
-  login_name     = each.key
+  login_name     = lower(each.key)
   password       = "foofoofoo"
   auth_method_id = boundary_auth_method.password.id
 }
