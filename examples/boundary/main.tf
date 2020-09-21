@@ -13,8 +13,7 @@ provider "boundary" {
 kms "aead" {
 	purpose = "recovery"
 	aead_type = "aes-gcm"
-#	key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
-  key = "H/F0H8fObY8kELPLPFixqE/rjAV67hevOKbMGfi2OHI="
+	key = "H/F0H8fObY8kELPLPFixqE/rjAV67hevOKbMGfi2OHI="
 	key_id = "global_recovery"
 }
 EOT
