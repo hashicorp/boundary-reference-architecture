@@ -20,17 +20,31 @@ EOT
 }
 
 resource "boundary_scope" "global" {
-  global_scope     = true
-  name             = "global"
-  scope_id         = "global"
-  auto_create_role = true
+  global_scope = true
+  name         = "global"
+  scope_id     = "global"
 }
 
 resource "boundary_scope" "org" {
-  scope_id         = boundary_scope.global.id
-  name             = "organization"
-  description      = "Organization scope"
-  auto_create_role = true
+  scope_id    = boundary_scope.global.id
+  name        = "organization"
+  description = "Organization scope"
+}
+
+resource "boundary_role" "org_admin" {
+  scope_id       = boundary_scope.global.id
+  grant_scope_id = boundary_scope.org.id
+  grant_strings  = ["id=*;actions=*"]
+  principal_ids = concat(
+    [for user in boundary_user.backend : user.id],
+    [for user in boundary_user.frontend : user.id],
+  ["u_auth"])
+}
+
+resource "boundary_role" "org_anon_listing" {
+  scope_id      = boundary_scope.org.id
+  grant_strings = ["type=auth-method;actions=list,authenticate"]
+  principal_ids = ["u_anon"]
 }
 
 resource "boundary_user" "backend" {
@@ -101,11 +115,8 @@ resource "boundary_role" "project_admin" {
   description    = "Administrator role for core infra"
   scope_id       = boundary_scope.org.id
   grant_scope_id = boundary_scope.core_infra.id
-  principal_ids = concat(
-    [for user in boundary_user.backend : user.id],
-    [for user in boundary_user.frontend : user.id]
-  )
-  grant_strings = ["id=*;actions=create,read,update,delete"]
+  principal_ids  = ["u_auth"]
+  grant_strings  = ["id=*;actions=*"]
 }
 
 resource "boundary_group" "backend_core_infra" {
@@ -127,7 +138,7 @@ resource "boundary_host" "backend_servers_ssh" {
   type            = "static"
   name            = "backend_server_ssh_${each.value}"
   description     = "Backend server host for SSH port"
-  address         = "${each.key}:22"
+  address         = "${each.key}"
   host_catalog_id = boundary_host_catalog.backend_servers.id
 }
 

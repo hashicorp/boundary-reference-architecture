@@ -24,12 +24,13 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "worker" {
-  count                  = 3
-  ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t3.micro"
-  subnet_id              = local.private_subnet[count.index]
-  key_name               = aws_key_pair.boundary.key_name
-  vpc_security_group_ids = [aws_security_group.worker.id]
+  count                       = 3
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = "t3.micro"
+  subnet_id                   = local.public_subnet[count.index]
+  key_name                    = aws_key_pair.boundary.key_name
+  vpc_security_group_ids      = [aws_security_group.worker.id]
+  associate_public_ip_address = true
 
   connection {
     type         = "ssh"
@@ -54,6 +55,7 @@ resource "aws_instance" "worker" {
   provisioner "file" {
     content     = <<EOT
 listener "tcp" {
+  address = "${self.private_ip}:9202"
 	purpose = "proxy"
 	tls_disable = true
 	#proxy_protocol_behavior = "allow_authorized"
@@ -62,6 +64,7 @@ listener "tcp" {
 
 worker {
   # Name attr must be unique
+	public_addr = "${self.public_ip}"
 	name = "demo-worker-${count.index}"
 	description = "A default worker created demonstration"
 	controllers = [
@@ -188,7 +191,6 @@ kms "aead" {
 	key_id = "global_recovery"
 }
 
-# docker run --name some-postgres -p 5432:5432 -e POSTGRES_PASSWORD=easy -d postgres
 database {
   url = "postgresql://boundary:boundarydemo@${aws_db_instance.boundary.endpoint}/boundary"
 }
@@ -274,23 +276,14 @@ resource "aws_security_group_rule" "allow_ssh_worker" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = [aws_vpc.main.cidr_block]
-  security_group_id = aws_security_group.worker.id
-}
-
-resource "aws_security_group_rule" "allow_9200_worker" {
-  type              = "ingress"
-  from_port         = 9200
-  to_port           = 9200
-  protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.worker.id
 }
 
-resource "aws_security_group_rule" "allow_9201_worker" {
+resource "aws_security_group_rule" "allow_9202_worker" {
   type              = "ingress"
-  from_port         = 9201
-  to_port           = 9201
+  from_port         = 9202
+  to_port           = 9202
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.worker.id
