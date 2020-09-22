@@ -15,19 +15,20 @@ Group=boundary
 WantedBy=multi-user.target
 EOF
 
-sudo groupadd boundary
-sudo adduser -S -G boundary boundary
-sudo chown boundary:boundary /etc/${NAME-${TYPE}.hcl
+# Add the boundary system user and group to ensure we have a no-login
+# user capable of owning and running Boundary
+sudo adduser --system --group boundary || true
+sudo chown boundary:boundary /etc/${NAME}-${TYPE}.hcl
 sudo chown boundary:boundary /usr/local/bin/boundary
 
 # Make sure to initialize the DB before starting the service. This will result in
 # a database already initizalized warning if another controller or worker has done this 
 # already, making it a lazy, best effort initialization
-if [ $TYPE = "controller" ]; then
+if [ "${TYPE}" = "controller" ]; then
   sudo /usr/local/bin/boundary database init -config /etc/${NAME}-${TYPE}.hcl || true
 fi
 
-sudo chmod 664 /etc/systemd/system/$NAME-$TYPE.service
+sudo chmod 664 /etc/systemd/system/${NAME}-${TYPE}.service
 sudo systemctl daemon-reload
 sudo systemctl enable ${NAME}-${TYPE}
 sudo systemctl start ${NAME}-${TYPE}
