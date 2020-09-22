@@ -1,6 +1,6 @@
 resource "aws_key_pair" "boundary" {
   key_name   = "boundary-demo"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxBc8jthfF76b2OdoE3kbNb17y+BKlhMhKN9HpYsHV1zD4F/wqJqufhF05ZsoOj5rXyKkxoTNBgMawxR/FWDzmhJLFVLaCzjRiggCdEFpOGbnggT/Mt3HruRLBmIOgk5Zj3+SMrtYqflOTMUahu1+4YZO2auqBIEJ/Vqm6Ja8y38I/ceOuQ9T+dbUJJ6FCtvtVq7oQcE6JVi78edgJDflCREYUyNJQXgnBQP4KZLjvSEt3yyKLCEoKGMmPYMAm+7jCEnjLft9N2l9t1SPAU9j80Qaf/72XtqaibEb97jFFXBW01RKA1BvN4uwCrw3I3unmB4YJU/m40Y66nwAm0b5j jeffmalnick@Jeffs-MBP"
+  public_key = file(var.pub_ssh_key_path)
 
   tags = {
     Name = "${var.tag}"
