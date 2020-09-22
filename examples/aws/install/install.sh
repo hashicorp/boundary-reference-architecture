@@ -10,6 +10,9 @@ Description=${NAME} ${TYPE}
 ExecStart=/usr/local/bin/${NAME} ${TYPE} -config /etc/${NAME}-${TYPE}.hcl
 User=boundary
 Group=boundary
+LimitMEMLOCK=infinity
+Capabilities=CAP_IPC_LOCK+ep
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 
 [Install]
 WantedBy=multi-user.target
