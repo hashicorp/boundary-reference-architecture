@@ -9,7 +9,7 @@ This directory contains two deployment examples for Boundary using Terraform. Th
 To deploy this example:
 - Make sure you have a local checkout of `github.com/hashicorp/boundary`
 - Build the `boundary` binary for linux using `XC_OSARCH=linux/amd64 make dev`
-- In the `example` directory, run `terraforom apply -target module.aws -var boundary_bin=<path to your binary>`
+- In the `example` directory, run `terraform apply -target module.aws -var boundary_bin=<path to your binary>`
 If your public SSH key you want to SSH to these hosts are not located at `~/.ssh/id_rsa.pub` then you'll also need to override that value.
 - Once your AWS infra is live, you can SSH to your workers and controllers and see their configuration:
   - `ssh ubuntu@<controller-ip>`
