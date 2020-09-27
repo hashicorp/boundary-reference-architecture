@@ -150,6 +150,9 @@ controller {
   # This name attr must be unique!
   name = "demo-controller-${count.index}"
   description = "A controller for a demo!"
+  database {
+    url = "postgresql://boundary:boundarydemo@${aws_db_instance.boundary.endpoint}/boundary"
+  }
 }
 
 listener "tcp" {
@@ -189,10 +192,6 @@ kms "aead" {
 	aead_type = "aes-gcm"
 	key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
 	key_id = "global_recovery"
-}
-
-database {
-  url = "postgresql://boundary:boundarydemo@${aws_db_instance.boundary.endpoint}/boundary"
 }
 EOT
     destination = "~/boundary-controller.hcl"
