@@ -10,7 +10,7 @@ resource "boundary_role" "org_admin" {
 
 resource "boundary_role" "org_anon_listing" {
   scope_id      = boundary_scope.org.id
-  grant_strings = ["type=auth-method;actions=list,authenticate"]
+  grant_strings = ["id=*;type=auth-method;actions=list,authenticate"]
   principal_ids = ["u_anon"]
 }
 
