@@ -35,6 +35,15 @@ resource "aws_security_group_rule" "allow_controller_sg" {
   source_security_group_id = aws_security_group.controller.id
 }
 
+resource "aws_security_group_rule" "allow_any_ingress" {
+  type              = "ingress"
+  from_port         = 5432
+  to_port           = 5432
+  protocol          = "tcp"
+  security_group_id = aws_security_group.db.id
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
 resource "aws_db_subnet_group" "boundary" {
   name       = "boundary"
   subnet_ids = local.public_subnet
