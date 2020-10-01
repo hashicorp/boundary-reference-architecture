@@ -2,7 +2,7 @@ resource "aws_lb" "controller" {
   name               = "${var.tag}-controller-${random_pet.test.id}"
   load_balancer_type = "network"
   internal           = false
-  subnets            = aws_subnet.public.*.id
+  subnets            = [aws_subnet.public.id]
 
   tags = {
     Name = "${var.tag}-controller-${random_pet.test.id}"

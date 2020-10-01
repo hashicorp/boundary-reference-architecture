@@ -46,7 +46,7 @@ resource "aws_security_group_rule" "allow_any_ingress" {
 
 resource "aws_db_subnet_group" "boundary" {
   name       = "boundary"
-  subnet_ids = aws_subnet.public.*.id
+  subnet_ids = [aws_subnet.public.id]
 
   tags = {
     Name = "${var.tag}-db-${random_pet.test.id}"
