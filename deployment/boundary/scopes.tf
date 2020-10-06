@@ -15,5 +15,5 @@ resource "boundary_scope" "core_infra" {
   name             = "core_infra"
   description      = "Backend infrastrcture project"
   scope_id         = boundary_scope.org.id
-  auto_create_role = true
+  # auto_create_role = true
 }
