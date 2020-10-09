@@ -17,12 +17,12 @@ controller {
 listener "tcp" {
   address                           = "${private_ip}:9200"
 	purpose                           = "api"
-%{ if var.tls_disable == "true" }
+%{ if tls_disabled == true }
 	tls_disable                       = true
 %{ else }
   tls_disable   = false
-  tls_cert_file = "/etc/pki/tls/boundary/boundary.cert"  
-  tls_key_file  = "/etc/pki/tls/boundary/boundary.key"
+  tls_cert_file = "${tls_cert_path}"  
+  tls_key_file  = "${tls_key_path}"
 %{ endif }
 	# proxy_protocol_behavior         = "allow_authorized"
 	# proxy_protocol_authorized_addrs = "127.0.0.1"
@@ -33,12 +33,12 @@ listener "tcp" {
 listener "tcp" {
   address                           = "${private_ip}:9201"
 	purpose                           = "cluster"
-%{ if var.tls_disable == "true" }
+%{ if tls_disabled == true }
 	tls_disable                       = true
 %{ else }
   tls_disable   = false
-  tls_cert_file = "/etc/pki/tls/boundary/boundary.cert"  
-  tls_key_file  = "/etc/pki/tls/boundary/boundary.key"
+  tls_cert_file = "${tls_cert_path}"  
+  tls_key_file  = "${tls_key_path}"
 %{ endif }
 	# proxy_protocol_behavior         = "allow_authorized"
 	# proxy_protocol_authorized_addrs = "127.0.0.1"

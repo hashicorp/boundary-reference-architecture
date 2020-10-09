@@ -41,8 +41,8 @@ resource "aws_instance" "worker" {
   provisioner "remote-exec" {
     inline = [
       "sudo mkdir -p /etc/pki/tls/boundary",
-      "sudo echo '${tls_private_key.boundary.private_key_pem}i' > ${var.tls_key_path}",
-      "sudo echo '${tls_self_signed_cert.boundary.cert_pem}' > ${var.tls_cert_path}",
+      "echo '${tls_private_key.boundary.private_key_pem}' | sudo tee ${var.tls_key_path}",
+      "echo '${tls_self_signed_cert.boundary.cert_pem}' | sudo tee ${var.tls_cert_path}",
     ]
   }
 
@@ -65,6 +65,8 @@ resource "aws_instance" "worker" {
       public_ip      = self.public_ip
       private_ip     = self.private_ip
       tls_disabled   = var.tls_disabled
+      tls_key_path   = var.tls_key_path
+      tls_cert_path  = var.tls_cert_path
     })
     destination = "~/boundary-worker.hcl"
   }
@@ -112,8 +114,8 @@ resource "aws_instance" "controller" {
   provisioner "remote-exec" {
     inline = [
       "sudo mkdir -p /etc/pki/tls/boundary",
-      "sudo echo '${tls_private_key.boundary.private_key_pem}i' > ${var.tls_key_path}",
-      "sudo echo '${tls_self_signed_cert.boundary.cert_pem}' > ${var.tls_cert_path}",
+      "echo '${tls_private_key.boundary.private_key_pem}' | sudo tee ${var.tls_key_path}",
+      "echo '${tls_self_signed_cert.boundary.cert_pem}' | sudo tee ${var.tls_cert_path}",
     ]
   }
 
@@ -131,10 +133,12 @@ resource "aws_instance" "controller" {
 
   provisioner "file" {
     content = templatefile("${path.module}/install/controller.hcl.tpl", {
-      name_suffix  = count.index
-      db_endpoint  = aws_db_instance.boundary.endpoint
-      private_ip   = self.private_ip
-      tls_disabled = var.tls_disabled
+      name_suffix   = count.index
+      db_endpoint   = aws_db_instance.boundary.endpoint
+      private_ip    = self.private_ip
+      tls_disabled  = var.tls_disabled
+      tls_key_path  = var.tls_key_path
+      tls_cert_path = var.tls_cert_path
     })
     destination = "~/boundary-controller.hcl"
   }

@@ -6,4 +6,4 @@ This repo contains Terraform AWS configuration for deploying Boundary.
 ![](arch.png)
 
 ## Contents
-- `deployment/`: Contains example Terraform configurations for deploying and configuring Boundary
+- `deployment/`: Contains example Terraform configurations for deploying and configuring Boundary on AWS for demonstration purposes.
