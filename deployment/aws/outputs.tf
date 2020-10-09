@@ -5,3 +5,7 @@ output "boundary_lb" {
 output "target_ips" {
   value = aws_instance.target.*.private_ip
 }
+
+output "kms_recovery_key_id" {
+  value = aws_kms_key.recovery.id
+}

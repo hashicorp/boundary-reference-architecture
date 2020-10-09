@@ -25,10 +25,17 @@ worker {
   ]
 }
 
-# must be same key as used on controller config
+%{ if kms_type == "aws" }
+kms "awskms" {
+	purpose    = "worker-auth"
+	key_id     = "global_root"
+  kms_key_id = "${kms_worker_auth_key_id}"
+}
+%{ else }
 kms "aead" {
 	purpose = "worker-auth"
 	aead_type = "aes-gcm"
 	key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
 	key_id = "global_worker-auth"
 }
+%{ endif }

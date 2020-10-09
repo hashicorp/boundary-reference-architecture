@@ -10,11 +10,10 @@ terraform {
 provider "boundary" {
   addr             = var.url
   recovery_kms_hcl = <<EOT
-kms "aead" {
-	purpose = "recovery"
-	aead_type = "aes-gcm"
-	key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
-	key_id = "global_recovery"
+kms "awskms" {
+	purpose    = "recovery"
+	key_id     = "global_root"
+  kms_key_id = "${var.kms_recovery_key_id}"
 }
 EOT
 }
