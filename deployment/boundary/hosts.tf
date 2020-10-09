@@ -6,7 +6,7 @@ resource "boundary_host_catalog" "backend_servers" {
 }
 
 resource "boundary_host" "backend_servers" {
-  for_each        = var.backend_server_ips
+  for_each        = var.target_ips
   type            = "static"
   name            = "backend_server_${each.value}"
   description     = "Backend server #${each.value}"

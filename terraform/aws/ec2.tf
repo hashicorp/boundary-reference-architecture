@@ -25,7 +25,7 @@ resource "aws_instance" "worker" {
   count                       = var.num_workers
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t3.micro"
-  subnet_id                   = aws_subnet.public.*.id[count.index]
+  subnet_id                   = aws_subnet.public.id
   key_name                    = aws_key_pair.boundary.key_name
   vpc_security_group_ids      = [aws_security_group.worker.id]
   associate_public_ip_address = true
@@ -36,14 +36,6 @@ resource "aws_instance" "worker" {
     private_key  = file("~/.ssh/id_rsa")
     host         = self.private_ip
     bastion_host = aws_instance.controller[count.index].public_ip
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo mkdir -p /etc/pki/tls/boundary",
-      "sudo echo '${tls_private_key.boundary.private_key_pem}i' > ${var.tls_key_path}",
-      "sudo echo '${tls_self_signed_cert.boundary.cert_pem}' > ${var.tls_cert_path}",
-    ]
   }
 
   provisioner "file" {
@@ -59,12 +51,11 @@ resource "aws_instance" "worker" {
   }
 
   provisioner "file" {
-    content = templatefile("${path.module}/install/worker.hcl.tpl", {
+    content = templatefile("install/worker.hcl.tpl", {
       controller_ips = aws_instance.controller.*.private_ip
       name_suffix    = count.index
       public_ip      = self.public_ip
       private_ip     = self.private_ip
-      tls_disabled   = var.tls_disabled
     })
     destination = "~/boundary-worker.hcl"
   }
@@ -97,7 +88,7 @@ resource "aws_instance" "controller" {
   count                       = var.num_controllers
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t3.micro"
-  subnet_id                   = aws_subnet.public.*.id[count.index]
+  subnet_id                   = aws_subnet.public.id
   key_name                    = aws_key_pair.boundary.key_name
   vpc_security_group_ids      = [aws_security_group.controller.id]
   associate_public_ip_address = true
@@ -107,14 +98,6 @@ resource "aws_instance" "controller" {
     user        = "ubuntu"
     private_key = file("~/.ssh/id_rsa")
     host        = self.public_ip
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo mkdir -p /etc/pki/tls/boundary",
-      "sudo echo '${tls_private_key.boundary.private_key_pem}i' > ${var.tls_key_path}",
-      "sudo echo '${tls_self_signed_cert.boundary.cert_pem}' > ${var.tls_cert_path}",
-    ]
   }
 
   provisioner "file" {
@@ -130,11 +113,10 @@ resource "aws_instance" "controller" {
   }
 
   provisioner "file" {
-    content = templatefile("${path.module}/install/controller.hcl.tpl", {
-      name_suffix  = count.index
-      db_endpoint  = aws_db_instance.boundary.endpoint
-      private_ip   = self.private_ip
-      tls_disabled = var.tls_disabled
+    content = templatefile("install/controller.hcl.tpl", {
+      name_suffix = count.index
+      db_endpoint = aws_db_instance.boundary.endpoint
+      private_ip  = self.private_ip
     })
     destination = "~/boundary-controller.hcl"
   }
@@ -253,7 +235,7 @@ resource "aws_instance" "target" {
   count                  = var.num_targets
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t3.micro"
-  subnet_id              = aws_subnet.private.*.id[count.index]
+  subnet_id              = aws_subnet.private.id
   key_name               = aws_key_pair.boundary.key_name
   vpc_security_group_ids = [aws_security_group.worker.id]
 

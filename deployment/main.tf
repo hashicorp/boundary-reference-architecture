@@ -3,7 +3,7 @@ module "aws" {
 }
 
 module "boundary" {
-  source             = "./boundary"
-  url                = "http://${module.aws.boundary_lb}:9200"
-  backend_server_ips = module.aws.backend_server_ips
+  source     = "./boundary"
+  url        = "http://${module.aws.boundary_lb}:9200"
+  target_ips = module.aws.target_ips
 }

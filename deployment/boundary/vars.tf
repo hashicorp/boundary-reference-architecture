@@ -30,7 +30,7 @@ variable "leadership_team" {
   ]
 }
 
-variable "backend_server_ips" {
+variable "target_ips" {
   type    = set(string)
   default = []
 }
