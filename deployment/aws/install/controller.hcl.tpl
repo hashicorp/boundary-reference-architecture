@@ -44,6 +44,25 @@ listener "tcp" {
 	# proxy_protocol_authorized_addrs = "127.0.0.1"
 }
 
+%{ if kms_type == "aws" }
+kms "awskms" {
+	purpose    = "root"
+	key_id     = "global_root"
+  kms_key_id = "${kms_root_key_id}"
+}
+
+kms "awskms" {
+	purpose    = "worker-auth"
+	key_id     = "global_root"
+  kms_key_id = "${kms_worker_auth_key_id}"
+}
+
+kms "awskms" {
+	purpose    = "recovery"
+	key_id     = "global_root"
+  kms_key_id = "${kms_recovery_key_id}"
+}
+%{ else }
 kms "aead" {
 	purpose   = "root"
 	aead_type = "aes-gcm"
@@ -64,3 +83,4 @@ kms "aead" {
 	key       = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
 	key_id    = "global_recovery"
 }
+%{ endif }

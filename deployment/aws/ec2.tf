@@ -25,6 +25,7 @@ resource "aws_instance" "worker" {
   count                       = var.num_workers
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t3.micro"
+  iam_instance_profile        = aws_iam_instance_profile.boundary.name
   subnet_id                   = aws_subnet.public.*.id[count.index]
   key_name                    = aws_key_pair.boundary.key_name
   vpc_security_group_ids      = [aws_security_group.worker.id]
@@ -60,13 +61,15 @@ resource "aws_instance" "worker" {
 
   provisioner "file" {
     content = templatefile("${path.module}/install/worker.hcl.tpl", {
-      controller_ips = aws_instance.controller.*.private_ip
-      name_suffix    = count.index
-      public_ip      = self.public_ip
-      private_ip     = self.private_ip
-      tls_disabled   = var.tls_disabled
-      tls_key_path   = var.tls_key_path
-      tls_cert_path  = var.tls_cert_path
+      controller_ips         = aws_instance.controller.*.private_ip
+      name_suffix            = count.index
+      public_ip              = self.public_ip
+      private_ip             = self.private_ip
+      tls_disabled           = var.tls_disabled
+      tls_key_path           = var.tls_key_path
+      tls_cert_path          = var.tls_cert_path
+      kms_type               = var.kms_type
+      kms_worker_auth_key_id = aws_kms_key.worker_auth.id
     })
     destination = "~/boundary-worker.hcl"
   }
@@ -99,6 +102,7 @@ resource "aws_instance" "controller" {
   count                       = var.num_controllers
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t3.micro"
+  iam_instance_profile        = aws_iam_instance_profile.boundary.name
   subnet_id                   = aws_subnet.public.*.id[count.index]
   key_name                    = aws_key_pair.boundary.key_name
   vpc_security_group_ids      = [aws_security_group.controller.id]
@@ -133,12 +137,16 @@ resource "aws_instance" "controller" {
 
   provisioner "file" {
     content = templatefile("${path.module}/install/controller.hcl.tpl", {
-      name_suffix   = count.index
-      db_endpoint   = aws_db_instance.boundary.endpoint
-      private_ip    = self.private_ip
-      tls_disabled  = var.tls_disabled
-      tls_key_path  = var.tls_key_path
-      tls_cert_path = var.tls_cert_path
+      name_suffix            = count.index
+      db_endpoint            = aws_db_instance.boundary.endpoint
+      private_ip             = self.private_ip
+      tls_disabled           = var.tls_disabled
+      tls_key_path           = var.tls_key_path
+      tls_cert_path          = var.tls_cert_path
+      kms_type               = var.kms_type
+      kms_worker_auth_key_id = aws_kms_key.worker_auth.id
+      kms_recovery_key_id    = aws_kms_key.recovery.id
+      kms_root_key_id        = aws_kms_key.root.id
     })
     destination = "~/boundary-controller.hcl"
   }
