@@ -53,13 +53,13 @@ kms "awskms" {
 
 kms "awskms" {
 	purpose    = "worker-auth"
-	key_id     = "global_root"
+	key_id     = "global_worker_auth"
   kms_key_id = "${kms_worker_auth_key_id}"
 }
 
 kms "awskms" {
 	purpose    = "recovery"
-	key_id     = "global_root"
+	key_id     = "global_recovery"
   kms_key_id = "${kms_recovery_key_id}"
 }
 %{ else }
