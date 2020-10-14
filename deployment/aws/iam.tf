@@ -29,7 +29,7 @@ resource "aws_iam_instance_profile" "boundary" {
 
 resource "aws_iam_role_policy" "boundary" {
   name = "${var.tag}-${random_pet.test.id}"
-  role = "${aws_iam_role.boundary.id}"
+  role = aws_iam_role.boundary.id
 
   policy = <<EOF
 {
