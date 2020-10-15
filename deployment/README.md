@@ -21,7 +21,7 @@ If your public SSH key you want to SSH to these hosts are not located at `~/.ssh
 - Once your AWS infra is live, you can SSH to your workers and controllers and see their configuration:
   - `ssh ubuntu@<controller-ip>`
   - `sudo systemctl status boundary-controller`
-  - For workers, the systemd unit is called `boudnary-worker`
+  - For workers, the systemd unit is called `boundary-worker`
   - The admin console will be available at `https://boundary-test-controller-<random_name>-<random_sha>.elb.us-east-1.amazonaws.com:9200`
 
 ## Configure Boundary 
