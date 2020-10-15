@@ -10,7 +10,7 @@ resource "boundary_host" "backend_servers" {
   type            = "static"
   name            = "backend_server_${each.value}"
   description     = "Backend server #${each.value}"
-  address         = "${each.key}"
+  address         = each.key
   host_catalog_id = boundary_host_catalog.backend_servers.id
 }
 
