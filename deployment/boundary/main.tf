@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     boundary = {
-      source  = "localhost/providers/boundary"
-      version = "0.0.1"
+      source  = "hashicorp/boundary"
+      version = "0.1.0"
     }
   }
 }
