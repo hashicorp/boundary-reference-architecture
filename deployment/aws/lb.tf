@@ -17,7 +17,7 @@ resource "aws_lb_target_group" "controller" {
 
   stickiness {
     enabled = false
-    type    = "lb_cookie"
+    type    = "source_ip"
   }
   tags = {
     Name = "${var.tag}-controller-${random_pet.test.id}"
