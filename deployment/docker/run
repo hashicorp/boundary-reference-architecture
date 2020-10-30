@@ -1,0 +1,65 @@
+#!/bin/bash
+
+function cleanup() {
+  pushd compose
+  docker-compose rm -fs 
+  popd
+  pushd terraform/
+  rm terraform.tfstate*
+  popd
+  exit 0
+}
+trap cleanup SIGKILL SIGINT
+
+function init_compose() {
+  pushd compose/
+  docker-compose up -d
+  popd
+}
+
+function init_terraform() {
+  pushd terraform
+  terraform init
+  terraform apply -auto-approve
+  popd
+}
+
+# Test with login to Boundary after provisioning
+function login() {
+  boundary authenticate password -login-name jeff -password foofoofoo -auth-method-id $(primary_org_ampw)
+}
+
+function primary_org_id() {
+  strip $(boundary scopes list -format json | jq  -c '.[] | select(.name | contains("primary")) | .["id"]')
+}
+
+function primary_org_ampw() {
+  strip $(boundary auth-methods list -scope-id $(primary_org_id) -format json | jq -c '.[]["id"]') 
+}
+
+function strip() {
+  echo "$1" | tr -d '"'
+}
+
+for arg in "$@"
+do
+    case $arg in
+        all)
+        init_compose
+        init_terraform
+        shift
+        ;;
+        login)
+        login
+        shift
+        ;;
+        cleanup)
+        cleanup
+        shift
+        ;;
+        *)
+        echo "cmd not found: try 'all', 'login', or 'cleanup'"
+        shift
+        ;;
+    esac
+done

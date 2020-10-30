@@ -13,31 +13,28 @@ All of these targets are on containers that are not port forwarded to the host m
 
 ## Getting Started 
 
+There is a helper script called `run` in this directory. You can use this script to deploy, login, and cleanup.
+
 Start the docker-compose deployment:
 
 ```bash
-$ pushd docker-compose/
-$ docker-compose up
-$ popd
+./run all
+```
+
+To login your Boundary CLI:
+
+```bash
+./run login
 ```
 
 To stop all containers and start from scratch:
 
-```
-$ pushd docker-compose/
-$ docker-compose rm
-$ popd
+```bash
+./run cleanup
 ```
 
-Provision Boundary deployment:
-
-```
-$ pushd terraform
-$ terraform init && terraform apply
-```
-
-Login to the UI or authenticate on the CLI:
-
+Login to the UI:
+  - Open browser to localhost:9200
   - Login Name: <any user from var.users>
   - Password: foofoofoo
   - Auth method ID: find this in the UI when selecting the auth method or from TF output
