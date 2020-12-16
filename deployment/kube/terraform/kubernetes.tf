@@ -15,29 +15,28 @@ resource "kubernetes_config_map" "boundary" {
 resource "kubernetes_deployment" "postgres" {
   metadata {
     name = "postgres"
+    labels = {
+      app = "postgres"
+    }
   }
 
   spec {
     replicas = 1
-
     selector {
       match_labels = {
-        run = "postgres"
+        app = "postgres"
       }
     }
 
     template {
       metadata {
         labels = {
-          run = "postgres"
+          service = "postgres"
+          app     = "postgres"
         }
       }
 
       spec {
-        volume {
-          name = "boundary-config"
-        }
-
         container {
           image = "postgres"
           name  = "postgres"
@@ -72,26 +71,12 @@ resource "kubernetes_deployment" "postgres" {
   }
 }
 
-resource "kubernetes_service" "postgres" {
-  metadata {
-    name = "postgres"
-  }
-
-  spec {
-    selector = {
-      run = "postgres"
-    }
-
-    port {
-      port     = 5432
-      protocol = "TCP"
-    }
-  }
-}
-
 resource "kubernetes_deployment" "boundary" {
   metadata {
     name = "boundary"
+    labels = {
+      app = "boundary"
+    }
   }
 
   spec {
@@ -99,14 +84,15 @@ resource "kubernetes_deployment" "boundary" {
 
     selector {
       match_labels = {
-        run = "boundary"
+        app = "boundary"
       }
     }
 
     template {
       metadata {
         labels = {
-          run = "boundary"
+          app     = "boundary"
+          service = "boundary"
         }
       }
 
@@ -116,29 +102,48 @@ resource "kubernetes_deployment" "boundary" {
         }
 
         init_container {
-          name    = "database-init"
+          name    = "boundary-init"
           image   = "hashicorp/boundary:0.1.2"
-          command = ["database", "init", "-config", "/boundary/boundary.hcl"]
+          command = ["/bin/sh", "-c"]
+          args    = ["database", "init", "-config", "/boundary/boundary.hcl"]
           volume_mount {
             name       = "boundary-config"
             mount_path = "/boundary"
             read_only  = true
           }
+          env {
+            name  = "POSTGRES_DB"
+            value = "boundary"
+          }
+
+          env {
+            name  = "POSTGRES_PASSWORD"
+            value = "postgres"
+          }
+
+          env {
+            name  = "POSTGRES_USER"
+            value = "postgres"
+          }
 
           env {
             name  = "BOUNDARY_PG_URL"
-            value = "postgresql://postgres:postgres@127.0.0.1/boundary?sslmode=disable"
+            value = "postgresql://postgres:postgres@postgres.postgres.svc:5432/boundary?sslmode=disable"
           }
         }
 
         container {
           image = "hashicorp/boundary:0.1.2"
           name  = "boundary"
+
           volume_mount {
             name       = "boundary-config"
             mount_path = "/boundary"
             read_only  = true
           }
+
+          command = ["/bin/sh", "-c"]
+          args    = ["boundary server -config /boundary/boundary.hcl"]
 
           env {
             name  = "POSTGRES_DB"
@@ -155,11 +160,37 @@ resource "kubernetes_deployment" "boundary" {
             value = "postgres"
           }
 
+          env {
+            name  = "BOUNDARY_PG_URL"
+            value = "postgresql://postgres:postgres@postgres.postgres.svc:5432/boundary?sslmode=disable"
+          }
+
           port {
             container_port = 9200
           }
         }
       }
+    }
+  }
+}
+
+resource "kubernetes_service" "boundary" {
+  metadata {
+    name = "boundary"
+    labels = {
+      app = "boundary"
+    }
+  }
+
+  spec {
+    type = "ClusterIP"
+    selector = {
+      app = "boundary"
+    }
+
+    port {
+      port        = 9200
+      target_port = 9200
     }
   }
 }

@@ -1,0 +1,81 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: boundary
+  labels:
+    app: boundary
+  namespace: boundary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: boundary
+  template:
+    metadata:
+      labels:
+        service: boundary
+        app: boundary
+    spec:
+      initContainers:
+        - name: boundary-init
+          image: hashicorp/boundary:0.1.2
+          command:
+          - "/bin/sh"
+          - "-c"
+          args:
+          - "boundary database init -config /boundary/boundary.hcl || :"
+          ports:
+            - containerPort: 9200
+          env:
+            - name: POSTGRES_DB
+              value: "boundary"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-admin-creds
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-admin-creds
+                  key: password
+            - name: BOUNDARY_PG_URL
+              value: "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres.postgres.svc:5432/boundary?sslmode=disable"
+          volumeMounts:
+            - mountPath: "/boundary"
+              name: "boundary-config"
+              readOnly: true
+      containers:
+        - name: boundary
+          image: hashicorp/boundary:0.1.2
+          ports:
+            - containerPort: 9200
+          env:
+            - name: POSTGRES_DB
+              value: "boundary"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-admin-creds
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-admin-creds
+                  key: password
+            - name: BOUNDARY_PG_URL
+              value: "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres.postgres.svc:5432/boundary?sslmode=disable"
+          volumeMounts:
+            - mountPath: "/boundary"
+              name: "boundary-config"
+              readOnly: true
+          command:
+          - "/bin/sh"
+          - "-c"
+          args:
+          - "boundary server -config /boundary/boundary.hcl"
+      volumes:
+        - name: boundary-config
+          configMap:
+            name: "boundary-config"
