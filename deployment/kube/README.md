@@ -97,7 +97,7 @@ $ export BOUNDARY_ADDR=<minikube service url value>
 Get the auth method ID:
 
 ```
-$ boundary auth-methods list -addr http://127.0.0.1:53823
+$ boundary auth-methods list
 
 Auth Method information:
   ID:             ampw_1234567890
