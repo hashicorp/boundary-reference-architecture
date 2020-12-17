@@ -2,14 +2,11 @@
 
 This directory contains an example deployment of Boundary using Kubernetes and Terraform.
 
-In this example, Boundary is deployed using the [hashicorp/boundary](https://hub.docker.com/r/hashicorp/boundary) Dockerhub image. The Boundary service ports are forwarded to the host machine to mimic being in a "public" network. Boundary is provisioned via Terraform to include targets for popular databases:
+In this example, Boundary is deployed using the [hashicorp/boundary](https://hub.docker.com/r/hashicorp/boundary) Dockerhub image. The Boundary service ports are forwarded to the host machine to mimic being in a "public" network. Boundary is provisioned via Terraform to include a redis target.
 
-- mysql
-- redis
-- cassandra
-- mssql server
+The Redis target is a container running on Kubernetes. At the end of this exmaple you'll be able to run Boundary on Minikube along with Redis and use Boundary to access the Redis command line prompt.
 
-All of these targets are on containers that are not port forwarded to the host machine in order to mimic them residing in a private network. Boundary is configured to reach these targets via Docker DNS (domain names defined by their service name in docker-compose). Clients can reach these targets via Boundary, and an example is given below using the redis-cli.
+The intent of this example is to show an example Boundary deployment on Kubernetes and how to access other services running on that Kubernetes cluster using Boundary.  
 
 ## Getting Started
 
