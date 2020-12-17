@@ -14,6 +14,7 @@ The intent of this example is to show an example Boundary deployment on Kubernet
 - Terraform 0.13
 - Go 1.15 or later
 - Minikube
+- Optional: Redis CLI for target access
 
 ### Deploy
 
@@ -94,7 +95,7 @@ the value from the `minikube service` command:
 $ export BOUNDARY_ADDR=<minikube service url value>
 ```
 
-Get the auth method ID:
+Get the auth method ID. Your auth method ID will be a unique value:
 
 ```
 $ boundary auth-methods list -addr http://127.0.0.1:53823
