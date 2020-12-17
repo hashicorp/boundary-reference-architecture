@@ -198,7 +198,7 @@ resource "kubernetes_deployment" "boundary" {
 
           env {
             name  = "BOUNDARY_PG_URL"
-            value = "postgresql://postgres:postgres@postgres.svc:5432/boundary?sslmode=disable"
+            value = "postgresql://postgres:postgres@postgres:5432/boundary?sslmode=disable"
           }
         }
 
@@ -217,7 +217,7 @@ resource "kubernetes_deployment" "boundary" {
 
           env {
             name  = "BOUNDARY_PG_URL"
-            value = "postgresql://postgres:postgres@postgres.svc:5432/boundary?sslmode=disable"
+            value = "postgresql://postgres:postgres@postgres:5432/boundary?sslmode=disable"
           }
 
           port {
