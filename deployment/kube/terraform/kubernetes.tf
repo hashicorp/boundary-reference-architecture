@@ -8,7 +8,64 @@ resource "kubernetes_config_map" "boundary" {
   }
 
   data = {
-    "boundary.hcl" = "${file("${path.module}/boundary.hcl")}"
+    "boundary.hcl" = <<EOF
+disable_mlock = true
+
+    controller {
+      name = "docker-controller"
+      description = "A controller for a docker demo!"
+      database {
+          url = "env://BOUNDARY_PG_URL"
+      }
+    }
+
+    worker {
+      name = "docker-worker"
+      description = "A worker for a docker demo"
+      address = "0.0.0.0"
+      controllers = ["0.0.0.0"]
+      #public_addr = "myhost.mycompany.com"
+    }
+
+    listener "tcp" {
+      address = "0.0.0.0"
+      purpose = "api"
+      tls_disable = true
+    }
+
+    listener "tcp" {
+      address = "0.0.0.0"
+      purpose = "cluster"
+      tls_disable = true
+    }
+
+    listener "tcp" {
+        address = "0.0.0.0"
+        purpose = "proxy"
+        tls_disable = true
+    }
+
+    kms "aead" {
+      purpose = "root"
+      aead_type = "aes-gcm"
+      key = "sP1fnF5Xz85RrXyELHFeZg9Ad2qt4Z4bgNHVGtD6ung="
+      key_id = "global_root"
+    }
+
+    kms "aead" {
+      purpose = "worker-auth"
+      aead_type = "aes-gcm"
+      key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
+      key_id = "global_worker-auth"
+    }
+
+    kms "aead" {
+      purpose = "recovery"
+      aead_type = "aes-gcm"
+      key = "8fZBjCUfN0TzjEGLQldGY4+iE9AkOvCfjh7+p0GtRBQ="
+      key_id = "global_recovery"
+    }
+EOF
   }
 }
 
@@ -71,6 +128,27 @@ resource "kubernetes_deployment" "postgres" {
   }
 }
 
+resource "kubernetes_service" "postgres" {
+  metadata {
+    name = "postgres"
+    labels = {
+      app = "postgres"
+    }
+  }
+
+  spec {
+    type = "ClusterIP"
+    selector = {
+      app = "postgres"
+    }
+
+    port {
+      port        = 5432
+      target_port = 5432
+    }
+  }
+}
+
 resource "kubernetes_deployment" "boundary" {
   metadata {
     name = "boundary"
@@ -99,6 +177,10 @@ resource "kubernetes_deployment" "boundary" {
       spec {
         volume {
           name = "boundary-config"
+
+          config_map {
+            name = "boundary-config"
+          }
         }
 
         init_container {
@@ -106,29 +188,17 @@ resource "kubernetes_deployment" "boundary" {
           image   = "hashicorp/boundary:0.1.2"
           command = ["/bin/sh", "-c"]
           args    = ["boundary database init -config /boundary/boundary.hcl"]
+
           volume_mount {
             name       = "boundary-config"
             mount_path = "/boundary"
             read_only  = true
-          }
-          env {
-            name  = "POSTGRES_DB"
-            value = "boundary"
-          }
 
-          env {
-            name  = "POSTGRES_PASSWORD"
-            value = "postgres"
-          }
-
-          env {
-            name  = "POSTGRES_USER"
-            value = "postgres"
           }
 
           env {
             name  = "BOUNDARY_PG_URL"
-            value = "postgresql://postgres:postgres@postgres.postgres.svc:5432/boundary?sslmode=disable"
+            value = "postgresql://postgres:postgres@postgres.svc:5432/boundary?sslmode=disable"
           }
         }
 
@@ -146,23 +216,8 @@ resource "kubernetes_deployment" "boundary" {
           args    = ["boundary server -config /boundary/boundary.hcl"]
 
           env {
-            name  = "POSTGRES_DB"
-            value = "boundary"
-          }
-
-          env {
-            name  = "POSTGRES_USER"
-            value = "postgres"
-          }
-
-          env {
-            name  = "POSTGRES_PASSWORD"
-            value = "postgres"
-          }
-
-          env {
             name  = "BOUNDARY_PG_URL"
-            value = "postgresql://postgres:postgres@postgres.postgres.svc:5432/boundary?sslmode=disable"
+            value = "postgresql://postgres:postgres@postgres.svc:5432/boundary?sslmode=disable"
           }
 
           port {
