@@ -11,7 +11,94 @@ In this example, Boundary is deployed using the [hashicorp/boundary](https://hub
 
 All of these targets are on containers that are not port forwarded to the host machine in order to mimic them residing in a private network. Boundary is configured to reach these targets via Docker DNS (domain names defined by their service name in docker-compose). Clients can reach these targets via Boundary, and an example is given below using the redis-cli.
 
-## Getting Started 
+## Getting Started
+
+### Requirements
+- Terraform 0.13
+- Go 1.15 or later
+- Minikube
+
+### Deploy
+
+Start minikube:
+
+```
+minikube start
+```
+
+Run terraform apply against the kubernetes terraform module:
+
+```
+terraform apply -target module.kubernetes
+```
+
+Run terraform apply against the boundary terraform module:
+
+```
+terraform apply -target module.boundary
+```
+
+### Verify
+
+Check the deployments:
+
+```
+$ kubectl get deployments
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+boundary   1/1     1            1           12m
+postgres   1/1     1            1           12m
+```
+
+Have minikube tunnel into the Boundary pod:
+
+```
+$ minikube service boundary
+|-----------|----------|-------------|--------------|
+| NAMESPACE |   NAME   | TARGET PORT |     URL      |
+|-----------|----------|-------------|--------------|
+| default   | boundary |             | No node port |
+|-----------|----------|-------------|--------------|
+😿  service default/boundary has no node port
+🏃  Starting tunnel for service boundary.
+|-----------|----------|-------------|------------------------|
+| NAMESPACE |   NAME   | TARGET PORT |          URL           |
+|-----------|----------|-------------|------------------------|
+| default   | boundary |             | http://127.0.0.1:53480 |
+|-----------|----------|-------------|------------------------|
+🎉  Opening service default/boundary in default browser...
+❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
+
+```
+
+This should also open a browser window with the Boundary login info.
+
+Note the URL to Boundary in this step because we'll use it as the `-addr` value for the following login steps.
+
+### Login to Boundary
+
+Get the auth method ID:
+
+```
+$ boundary auth-methods list -addr http://127.0.0.1:53823
+
+Auth Method information:
+  ID:             ampw_2Bpt8sl4J5
+    Description:  Provides initial administrative authentication into Boundary
+    Name:         Generated global scope initial auth method
+    Type:         password
+    Version:      1
+```
+
+Now login:
+
+```
+
+```
+
+
+
+
+### SCratch
 
 There is a helper script called `run` in this directory. You can use this script to deploy, login, and cleanup.
 
