@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "boundary" {
-  addr             = "http://127.0.0.1:51677/"
+  addr             = var.addr
   recovery_kms_hcl = <<EOT
 kms "aead" {
   purpose = "recovery"
@@ -22,30 +22,7 @@ EOT
 variable "users" {
   type = set(string)
   default = [
-    "jim",
-    "mike",
-    "todd",
-    "randy",
-    "susmitha",
     "jeff",
-    "pete",
-    "harold",
-    "patrick",
-    "jonathan",
-    "yoko",
-    "brandon",
-    "kyle",
-    "justin",
-    "melissa",
-    "paul",
-    "mitchell",
-    "armon",
-    "andy",
-    "ben",
-    "kristopher",
-    "kris",
-    "chris",
-    "swarna",
   ]
 }
 
@@ -140,124 +117,17 @@ resource "boundary_host_catalog" "databases" {
   scope_id    = boundary_scope.project.id
 }
 
-resource "boundary_host" "localhost" {
-  type            = "static"
-  name            = "localhost"
-  description     = "Localhost host"
-  address         = "localhost"
-  host_catalog_id = boundary_host_catalog.databases.id
-}
-
-# Target hosts available on localhost: ssh and postgres
-# Postgres is exposed to localhost for debugging of the 
-# Boundary DB from the CLI. Assumes SSHD is running on
-# localhost.
-resource "boundary_host_set" "local" {
-  type            = "static"
-  name            = "local"
-  description     = "Host set for local servers"
-  host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.localhost.id]
-}
-
-resource "boundary_target" "ssh" {
-  type                     = "tcp"
-  name                     = "ssh"
-  description              = "SSH server"
-  scope_id                 = boundary_scope.project.id
-  session_connection_limit = -1
-  session_max_seconds      = 2
-  default_port             = 22
-  host_set_ids = [
-    boundary_host_set.local.id
-  ]
-}
-
-resource "boundary_target" "postgres" {
-  type                     = "tcp"
-  name                     = "postgres"
-  description              = "Postgres server"
-  scope_id                 = boundary_scope.project.id
-  session_connection_limit = -1
-  session_max_seconds      = 2
-  default_port             = 5432
-  host_set_ids = [
-    boundary_host_set.local.id
-  ]
-}
-
-resource "boundary_host" "cassandra" {
-  type        = "static"
-  name        = "cassandra"
-  description = "Private cassandra container"
-  # DNS set via docker-compose
-  address         = "cassandra"
-  host_catalog_id = boundary_host_catalog.databases.id
-}
-
-resource "boundary_host_set" "cassandra" {
-  type            = "static"
-  name            = "cassandra"
-  description     = "Host set for cassandra containers"
-  host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.cassandra.id]
-}
-
-resource "boundary_target" "cassandra" {
-  type                     = "tcp"
-  name                     = "cassandra"
-  description              = "Cassandra server"
-  scope_id                 = boundary_scope.project.id
-  session_connection_limit = -1
-  session_max_seconds      = 2
-  default_port             = 7000
-  host_set_ids = [
-    boundary_host_set.cassandra.id
-  ]
-}
-
-resource "boundary_host" "mysql" {
-  type        = "static"
-  name        = "mysql"
-  description = "Private mysql container"
-  # DNS set via docker-compose
-  address         = "mysql"
-  host_catalog_id = boundary_host_catalog.databases.id
-}
-
-resource "boundary_host_set" "mysql" {
-  type            = "static"
-  name            = "mysql"
-  description     = "Host set for mysql containers"
-  host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.mysql.id]
-}
-
-resource "boundary_target" "mysql" {
-  type                     = "tcp"
-  name                     = "mysql"
-  description              = "MySQL server"
-  scope_id                 = boundary_scope.project.id
-  session_connection_limit = -1
-  session_max_seconds      = 2
-  default_port             = 3306
-  host_set_ids = [
-    boundary_host_set.mysql.id
-  ]
-}
-
 resource "boundary_host" "redis" {
-  type        = "static"
-  name        = "redis"
-  description = "Private redis container"
-  # DNS set via docker-compose
-  address         = "redis"
-  host_catalog_id = boundary_host_catalog.databases.id
-}
-
-resource "boundary_host_set" "redis" {
   type            = "static"
   name            = "redis"
+  description     = "redis container"
+  address         = "redis.svc"
+  host_catalog_id = boundary_host_catalog.databases.id
+}
+
+resource "boundary_host_set" "redis_containers" {
+  type            = "static"
+  name            = "redis_containers"
   description     = "Host set for redis containers"
   host_catalog_id = boundary_host_catalog.databases.id
   host_ids        = [boundary_host.redis.id]
@@ -266,41 +136,41 @@ resource "boundary_host_set" "redis" {
 resource "boundary_target" "redis" {
   type                     = "tcp"
   name                     = "redis"
-  description              = "Redis server"
+  description              = "Redis container"
   scope_id                 = boundary_scope.project.id
   session_connection_limit = -1
-  session_max_seconds      = 2
+  session_max_seconds      = 10000
   default_port             = 6379
   host_set_ids = [
-    boundary_host_set.redis.id
+    boundary_host_set.redis_containers.id
   ]
 }
 
-resource "boundary_host" "mssql" {
-  type        = "static"
-  name        = "mssql"
-  description = "Private mssql container"
-  # DNS set via docker-compose
-  address         = "mssql"
+resource "boundary_host" "postgres" {
+  type            = "static"
+  name            = "postgres"
+  description     = "postgres container"
+  address         = "postgres.svc"
   host_catalog_id = boundary_host_catalog.databases.id
 }
 
-resource "boundary_host_set" "mssql" {
+resource "boundary_host_set" "postgres_containers" {
   type            = "static"
-  name            = "mssql"
-  description     = "Host set for mssql containers"
+  name            = "postgres_containers"
+  description     = "Host set for postgres containers"
   host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.mssql.id]
+  host_ids        = [boundary_host.postgres.id]
 }
-resource "boundary_target" "mssql" {
+
+resource "boundary_target" "postgres" {
   type                     = "tcp"
-  name                     = "mssql"
-  description              = "Microsoft SQL server"
+  name                     = "postgres"
+  description              = "Postgres server"
   scope_id                 = boundary_scope.project.id
   session_connection_limit = -1
-  session_max_seconds      = 2
-  default_port             = 1433
+  session_max_seconds      = 10000
+  default_port             = 5432
   host_set_ids = [
-    boundary_host_set.local.id
+    boundary_host_set.postgres_containers.id
   ]
 }

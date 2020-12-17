@@ -23,19 +23,32 @@ All of these targets are on containers that are not port forwarded to the host m
 Start minikube:
 
 ```
-minikube start
+$ minikube start
+```
+
+Initialize Terraform:
+
+```
+$ terraform init
 ```
 
 Run terraform apply against the kubernetes terraform module:
 
 ```
-terraform apply -target module.kubernetes
+$ terraform apply -target module.kubernetes
 ```
 
-Run terraform apply against the boundary terraform module:
+Expose the Boundary service for provisioning:
 
 ```
-terraform apply -target module.boundary
+$ minikube service boundary
+```
+
+Run terraform apply against the boundary terraform module using the value for Boundary's 
+address found in the previous command:
+
+```
+$ terraform apply -target module.boundary -var boundary_addr=<MINIKUBE EXPOSED URL>
 ```
 
 ### Verify
@@ -70,11 +83,19 @@ $ minikube service boundary
 
 ```
 
-This should also open a browser window with the Boundary login info.
+This should also open a browser window with the Boundary login info. You can login with the 
+user credentials setup with Terraform (user: jeff, pw: foofoofoo).
 
-Note the URL to Boundary in this step because we'll use it as the `-addr` value for the following login steps.
+Note the URL to Boundary in this step because we'll use it later.
 
 ### Login to Boundary
+
+In the shell you intend to run `boundary` commands, export the `BOUNDARY_ADDR` variable with 
+the value from the `minikube service` command:
+
+```
+$ export BOUNDARY_ADDR=<minikube service url value>
+```
 
 Get the auth method ID:
 
@@ -82,7 +103,7 @@ Get the auth method ID:
 $ boundary auth-methods list -addr http://127.0.0.1:53823
 
 Auth Method information:
-  ID:             ampw_2Bpt8sl4J5
+  ID:             ampw_1234567890
     Description:  Provides initial administrative authentication into Boundary
     Name:         Generated global scope initial auth method
     Type:         password
@@ -92,58 +113,27 @@ Auth Method information:
 Now login:
 
 ```
-
+$ boundary authenticate password -login-name=jeff -password=foofoofoo -auth-method-id=ampw_1234567890
 ```
 
+From the UI or the CLI, grab the target ID for the redis container in the databases project. If
+you're doing this on the CLI, you'll want to list the scopes from the `primary` org scope we 
+created using Terraform:
 
-
-
-### SCratch
-
-There is a helper script called `run` in this directory. You can use this script to deploy, login, and cleanup.
-
-Start the docker-compose deployment:
-
-```bash
-./run all
+```
+$ boundary scopes list
+<get scope ID for primary org>
+$ boundary scopes list -scope-id <primary org ID>
 ```
 
-To login your Boundary CLI:
+Once you have the databases project scope ID, you can list the targets:
 
-```bash
-./run login
+```
+$ boundary targets list -scope-id <databases project scope ID>
 ```
 
-To stop all containers and start from scratch:
+You'll want the target ID for the Redis container. Use that target ID to start a session:
 
-```bash
-./run cleanup
 ```
-
-Login to the UI:
-  - Open browser to localhost:9200
-  - Login Name: <any user from var.users>
-  - Password: foofoofoo
-  - Auth method ID: find this in the UI when selecting the auth method or from TF output
-
-```bash
-$ boundary authenticate password -login-name jeff -password foofoofoo -auth-method-id <get_from_console_or_tf>
-
-Authentication information:
-  Account ID:      apw_gAE1rrpnG2
-  Auth Method ID:  ampw_Qrwp0l7UH4
-  Expiration Time: Fri, 06 Nov 2020 07:17:01 PST
-  Token:           at_NXiLK0izep_s14YkrMC6A4MajKyPekeqTTyqoFSg3cytC4cP8sssBRe5R8cXoerLkG7vmRYAY5q1Ksfew3JcxWSevNosoKarbkWABuBWPWZyQeUM1iEoFcz6uXLEyn1uVSKek7g9omERHrFs
+$ boundary connect -exec redis-cli -target-id <redis target id> -- -h {{boundary.ip}} -p {{boundary.port}}
 ```
-
-## Connect to Private Redis
-
-Once the deployment is live, you can connect to the containers (assuming their clients are
-installed on your host system). For example, we'll use [redis-cli](https://redis.io/topics/rediscli) to ping the Redis container via Boundary:
-
-```bash
-$ boundary connect -exec redis-cli -target-id ttcp_Mgvxjg8pjP -- -p {{boundary.port}} ping
-PONG
-```
-
-Explore the other containers such as Cassandra and Mysql (default passwords are set via env vars in the docker-compose.yml file).
