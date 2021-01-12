@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "boundary" {
 
         init_container {
           name    = "boundary-init"
-          image   = "hashicorp/boundary:0.1.2"
+          image   = "hashicorp/boundary:0.1.3"
           command = ["/bin/sh", "-c"]
           args    = ["boundary database init -config /boundary/boundary.hcl"]
 
@@ -52,7 +52,7 @@ resource "kubernetes_deployment" "boundary" {
         }
 
         container {
-          image = "hashicorp/boundary:0.1.2"
+          image = "hashicorp/boundary:0.1.3"
           name  = "boundary"
 
           volume_mount {
@@ -72,17 +72,23 @@ resource "kubernetes_deployment" "boundary" {
           port {
             container_port = 9200
           }
+          port {
+            container_port = 9201
+          }
+          port {
+            container_port = 9202
+          }
         }
       }
     }
   }
 }
 
-resource "kubernetes_service" "boundary" {
+resource "kubernetes_service" "boundary_controller" {
   metadata {
-    name = "boundary"
+    name = "boundary-controller"
     labels = {
-      app = "boundary"
+      app = "boundary-controller"
     }
   }
 
@@ -95,6 +101,14 @@ resource "kubernetes_service" "boundary" {
     port {
       port        = 9200
       target_port = 9200
+    }
+    port {
+      port        = 9201
+      target_port = 9201
+    }
+    port {
+      port        = 9202
+      target_port = 9202
     }
   }
 }

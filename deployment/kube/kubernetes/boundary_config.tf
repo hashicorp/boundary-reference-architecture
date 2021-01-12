@@ -13,14 +13,15 @@ disable_mlock = true
       database {
           url = "env://BOUNDARY_PG_URL"
       }
+			public_cluster_addr = "127.0.0.1:9200"
     }
 
     worker {
       name = "docker-worker"
       description = "A worker for a docker demo"
       address = "0.0.0.0"
-      controllers = ["0.0.0.0"]
-      #public_addr = "myhost.mycompany.com"
+      controllers = ["boundary"]
+      public_addr = "127.0.0.1:9202"
     }
 
     listener "tcp" {

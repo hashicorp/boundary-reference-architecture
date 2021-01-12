@@ -36,10 +36,13 @@ Run terraform apply against the kubernetes terraform module:
 $ terraform apply -target module.kubernetes
 ```
 
-Expose the Boundary service for provisioning:
+Expose the Boundary controller service for provisioning (note that this will open a browser to where you can 
+login to Boundary but because we haven't provisioned Boundary yet, that won't be possible. You can 
+ignore or close this window. All we need from this is the route to the Boundary server so Terraform
+can provision it):
 
 ```
-$ minikube service boundary
+$ minikube service boundary-controller
 ```
 
 Run terraform apply against the boundary terraform module using the value for Boundary's 
@@ -58,6 +61,7 @@ $ kubectl get deployments
 NAME       READY   UP-TO-DATE   AVAILABLE   AGE
 boundary   1/1     1            1           12m
 postgres   1/1     1            1           12m
+redis      1/1     1            1           12m
 ```
 
 Have minikube tunnel into the Boundary pod:
@@ -95,10 +99,12 @@ the value from the `minikube service` command:
 $ export BOUNDARY_ADDR=<minikube service url value>
 ```
 
-Get the auth method ID. Your auth method ID will be a unique value:
+Get the auth method ID for the password auth method in the `primary` scope. We're going to use 
+some jq foo to to get the correct ID (remember resource ID's are unique, so yours will be different
+from the one I get here): 
 
 ```
-$ boundary auth-methods list
+$ boundary auth-methods list -scope-id $(boundary scopes list -format json | jq -c ".[] | select(.name | contains(\"primary\")) | .[\"id\"]" | tr -d '"')
 
 Auth Method information:
   ID:             ampw_1234567890
@@ -124,10 +130,12 @@ $ boundary scopes list
 $ boundary scopes list -scope-id <primary org ID>
 ```
 
-Once you have the databases project scope ID, you can list the targets:
+Once you have the databases project scope ID, you can list the targets (again, using some JQ foo to get the correct scope ID for the `primary` scope).
+
+For simplicity, here's a one-liner to list the targets at project scope within the `primary` org scope:
 
 ```
-$ boundary targets list -scope-id <databases project scope ID>
+$ boundary targets list -scope-id $(boundary scopes list -format json -scope-id $(boundary scopes list -format json | jq -c ".[] | select(.name | contains(\"primary\")) | .[\"id\"]" | tr -d '"') | jq ".[].id" | tr -d '"')
 ```
 
 You'll want the target ID for the Redis container. Use that target ID to start a session:
