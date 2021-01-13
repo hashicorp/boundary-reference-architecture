@@ -36,18 +36,23 @@ Run terraform apply against the kubernetes terraform module:
 $ terraform apply -target module.kubernetes
 ```
 
-Expose the Boundary controller service for provisioning (note that this will open a browser to where you can 
-login to Boundary but because we haven't provisioned Boundary yet, that won't be possible. You can 
-ignore or close this window. All we need from this is the route to the Boundary server so Terraform
-can provision it):
+Expose all 3 Boundary services running on minikube, on your local host using `kubectl port-forward` (you'll
+need to do this in 3 separate long running shells):
 
 ```
-$ minikube service boundary-controller
-```
+$ kubectl port-forward pods/$(kubectl get pods | grep boundary | cut -d " " -f 1) 9200:9200
+Forwarding from 127.0.0.1:9200 -> 9200
+Forwarding from [::1]:9200 -> 9200
 
-Minikube will also leave a table in the stdout of your terminal with three URLs. Each URL relates to one of the 
-named ports in the boundary controller service spec: api, cluster, and data ports. You want the first URL in this 
-list which is the API port for the next step.
+$ kubectl port-forward pods/$(kubectl get pods | grep boundary | cut -d " " -f 1) 9201:9201
+Forwarding from 127.0.0.1:9201 -> 9201
+Forwarding from [::1]:9201 -> 9201
+
+$ kubectl port-forward pods/$(kubectl get pods | grep boundary | cut -d " " -f 1) 9202:9202
+Forwarding from 127.0.0.1:9202 -> 9202
+Forwarding from [::1]:9202 -> 9202
+Handling connection for 9202
+```
 
 Run terraform apply against the boundary terraform module using the value for Boundary's 
 address found in the previous command:
@@ -68,39 +73,13 @@ postgres   1/1     1            1           12m
 redis      1/1     1            1           12m
 ```
 
-Have minikube tunnel into the Boundary pod:
-
-```
-$ minikube service boundary
-|-----------|----------|-------------|--------------|
-| NAMESPACE |   NAME   | TARGET PORT |     URL      |
-|-----------|----------|-------------|--------------|
-| default   | boundary |             | No node port |
-|-----------|----------|-------------|--------------|
-😿  service default/boundary has no node port
-🏃  Starting tunnel for service boundary.
-|-----------|----------|-------------|------------------------|
-| NAMESPACE |   NAME   | TARGET PORT |          URL           |
-|-----------|----------|-------------|------------------------|
-| default   | boundary |             | http://127.0.0.1:53480 |
-|-----------|----------|-------------|------------------------|
-🎉  Opening service default/boundary in default browser...
-❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
-
-```
-
-This should also open a browser window with the Boundary login info. You can login with the 
-user credentials setup with Terraform (user: jeff, pw: foofoofoo).
-
-Note the URL to Boundary in this step because we'll use it later.
-
 ### Login to Boundary
 
 In the shell you intend to run `boundary` commands, export the `BOUNDARY_ADDR` variable with 
-the value from the `minikube service` command:
+the value from the `kubectl port-forward` command:
 
 ```
-$ export BOUNDARY_ADDR=<minikube service url value>
+$ export BOUNDARY_ADDR=http://localhost:9200
 ```
 
 Get the auth method ID for the password auth method in the `primary` scope. We're going to use 
@@ -145,5 +124,10 @@ You can also navigate to the admin console, login, go to projects, and then targ
 You'll want the target ID for the Redis container. Use that target ID to start a session:
 
 ```
-$ boundary connect -exec redis-cli -target-id <redis target id> -- -h {{boundary.ip}} -p {{boundary.port}}
+$ boundary connect -exec redis-cli -target-id ttcp_TBjC1bYRIQ -- -h {{boundary.ip}} -p {{boundary.port}}
+127.0.0.1:57159> ping
+PONG
+127.0.0.1:57159>
 ```
+
+Congrats! You've just deployed Boundary onto Kubernetes and are able to access other containers running on Kubernetes using it.

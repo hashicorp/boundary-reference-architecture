@@ -52,7 +52,7 @@ resource "kubernetes_deployment" "boundary" {
         }
 
         container {
-          image = "hashicorp/boundary:0.1.3"
+          image = "hashicorp/boundary:0.1.4"
           name  = "boundary"
 
           volume_mount {
