@@ -13,3 +13,11 @@ resource "boundary_host_set" "postgres_containers" {
   host_catalog_id = boundary_host_catalog.databases.id
   host_ids        = [boundary_host.postgres.id]
 }
+
+resource "boundary_host_set" "localhost" {
+  type            = "static"
+  name            = "localhost"
+  description     = "Host set for postgres containers"
+  host_catalog_id = boundary_host_catalog.databases.id
+  host_ids        = [boundary_host.localhost.id]
+}
