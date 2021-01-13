@@ -45,6 +45,10 @@ can provision it):
 $ minikube service boundary-controller
 ```
 
+Minikube will also leave a table in the stdout of your terminal with three URLs. Each URL relates to one of the 
+named ports in the boundary controller service spec: api, cluster, and data ports. You want the first URL in this 
+list which is the API port for the next step.
+
 Run terraform apply against the boundary terraform module using the value for Boundary's 
 address found in the previous command:
 
@@ -132,11 +136,11 @@ $ boundary scopes list -scope-id <primary org ID>
 
 Once you have the databases project scope ID, you can list the targets (again, using some JQ foo to get the correct scope ID for the `primary` scope).
 
-For simplicity, here's a one-liner to list the targets at project scope within the `primary` org scope:
+```
+$ boundary targets list -scope-id <project_scope_id>
+```
 
-```
-$ boundary targets list -scope-id $(boundary scopes list -format json -scope-id $(boundary scopes list -format json | jq -c ".[] | select(.name | contains(\"primary\")) | .[\"id\"]" | tr -d '"') | jq ".[].id" | tr -d '"')
-```
+You can also navigate to the admin console, login, go to projects, and then targets and copy it from the UI.
 
 You'll want the target ID for the Redis container. Use that target ID to start a session:
 

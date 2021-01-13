@@ -13,7 +13,6 @@ worker {
   description = "A worker for a docker demo"
   address = "0.0.0.0"
   controllers = ["0.0.0.0"]
-  #public_addr = "myhost.mycompany.com"
 }
 
 listener "tcp" {

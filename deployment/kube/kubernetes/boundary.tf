@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "boundary" {
 
         init_container {
           name    = "boundary-init"
-          image   = "hashicorp/boundary:0.1.3"
+          image   = "hashicorp/boundary:0.1.4"
           command = ["/bin/sh", "-c"]
           args    = ["boundary database init -config /boundary/boundary.hcl"]
 
@@ -99,14 +99,17 @@ resource "kubernetes_service" "boundary_controller" {
     }
 
     port {
+      name        = "api"
       port        = 9200
       target_port = 9200
     }
     port {
+      name        = "cluster"
       port        = 9201
       target_port = 9201
     }
     port {
+      name        = "data"
       port        = 9202
       target_port = 9202
     }
