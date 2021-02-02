@@ -17,7 +17,7 @@ services:
       retries: 5
   
   db-init:
-    image: hashicorp/boundary:0.1.1
+    image: hashicorp/boundary:0.1.5
     command: ["database", "init", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
@@ -29,7 +29,7 @@ services:
 
   
   boundary:
-    image: hashicorp/boundary:0.1.1
+    image: hashicorp/boundary:0.1.5
     command: ["server", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
