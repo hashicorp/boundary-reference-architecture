@@ -11,25 +11,23 @@ controller {
 worker {
   name = "docker-worker"
   description = "A worker for a docker demo"
-  address = "0.0.0.0"
-  controllers = ["0.0.0.0"]
-  #public_addr = "myhost.mycompany.com"
+  address = "boundary"
 }
 
 listener "tcp" {
-  address = "0.0.0.0"
+  address = "boundary"
   purpose = "api"
   tls_disable = true 
 }
 
 listener "tcp" {
-  address = "0.0.0.0"
+  address = "boundary"
   purpose = "cluster"
   tls_disable = true 
 }
 
 listener "tcp" {
-	address = "0.0.0.0"
+	address = "boundary"
 	purpose = "proxy"
 	tls_disable = true
 }
