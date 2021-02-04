@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "boundary" {
 
         init_container {
           name    = "boundary-init"
-          image   = "hashicorp/boundary:0.1.4"
+          image   = "hashicorp/boundary:0.1.5"
           command = ["/bin/sh", "-c"]
           args    = ["boundary database init -config /boundary/boundary.hcl"]
 
@@ -49,10 +49,15 @@ resource "kubernetes_deployment" "boundary" {
             name  = "BOUNDARY_PG_URL"
             value = "postgresql://postgres:postgres@postgres:5432/boundary?sslmode=disable"
           }
+
+          env {
+            name  = "HOSTNAME"
+            value = "boundary"
+          }
         }
 
         container {
-          image = "hashicorp/boundary:0.1.4"
+          image = "hashicorp/boundary:0.1.5"
           name  = "boundary"
 
           volume_mount {
@@ -67,6 +72,11 @@ resource "kubernetes_deployment" "boundary" {
           env {
             name  = "BOUNDARY_PG_URL"
             value = "postgresql://postgres:postgres@postgres:5432/boundary?sslmode=disable"
+          }
+
+          env {
+            name  = "HOSTNAME"
+            value = "boundary"
           }
 
           port {
