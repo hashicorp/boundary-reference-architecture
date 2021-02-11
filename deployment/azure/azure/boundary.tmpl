@@ -26,7 +26,7 @@ sudo cp $secretsname.crt /etc/pki/tls/boundary/cert.crt
 # TODO: pass boundary version through a variable
 curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get update && sudo apt-get install boundary -y
+sudo apt-get update && sudo apt-get install boundary=${boundary_version} -y
 
 # Get private ip address
 private_ip=$(hostname -i | awk '{print $1}')
@@ -104,7 +104,7 @@ sudo mv ~/boundary-controller.hcl /etc/boundary-controller.hcl
 
 %{endif}
 
-# Generates config is type is "worker"
+# Generates config if type is "worker"
 # This config assumes that you are using the certificate from Azure Key Vault
 # and you are using Key Vault for the KMS
 #

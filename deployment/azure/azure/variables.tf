@@ -66,6 +66,11 @@ variable "cert_san" {
   default = ["boundary-azure.example.com"]
 }
 
+variable "boundary_version" {
+  type    = string
+  default = "0.1.4"
+}
+
 resource "random_id" "id" {
   byte_length = 4
 }

@@ -3,15 +3,15 @@ resource "azurerm_public_ip" "boundary" {
   resource_group_name = azurerm_resource_group.boundary.name
   location            = azurerm_resource_group.boundary.location
   allocation_method   = "Static"
-  domain_name_label = lower(azurerm_resource_group.boundary.name)
-  sku = "Standard"
+  domain_name_label   = lower(azurerm_resource_group.boundary.name)
+  sku                 = "Standard"
 }
 
 resource "azurerm_lb" "boundary" {
   name                = local.lb_name
   location            = azurerm_resource_group.boundary.location
   resource_group_name = azurerm_resource_group.boundary.name
-  sku = "Standard"
+  sku                 = "Standard"
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
@@ -20,10 +20,9 @@ resource "azurerm_lb" "boundary" {
 }
 
 resource "azurerm_lb_backend_address_pool" "pools" {
-  for_each            = toset(["controller", "worker"])
-  resource_group_name = azurerm_resource_group.boundary.name
-  loadbalancer_id     = azurerm_lb.boundary.id
-  name                = each.key
+  for_each        = toset(["controller", "worker"])
+  loadbalancer_id = azurerm_lb.boundary.id
+  name            = each.key
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "controller" {
@@ -62,8 +61,8 @@ resource "azurerm_lb_rule" "controller" {
   frontend_port                  = 9200
   backend_port                   = 9200
   frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id = azurerm_lb_probe.controller_9200.id
-  backend_address_pool_id = azurerm_lb_backend_address_pool.pools["controller"].id
+  probe_id                       = azurerm_lb_probe.controller_9200.id
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.pools["controller"].id
 }
 
 resource "azurerm_lb_rule" "worker" {
@@ -74,7 +73,7 @@ resource "azurerm_lb_rule" "worker" {
   frontend_port                  = 9202
   backend_port                   = 9202
   frontend_ip_configuration_name = "PublicIPAddress"
-  probe_id = azurerm_lb_probe.worker_9202.id
-  backend_address_pool_id = azurerm_lb_backend_address_pool.pools["worker"].id
+  probe_id                       = azurerm_lb_probe.worker_9202.id
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.pools["worker"].id
 }
 

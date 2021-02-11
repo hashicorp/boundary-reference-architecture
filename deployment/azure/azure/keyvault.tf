@@ -11,7 +11,6 @@ resource "azurerm_key_vault" "boundary" {
   resource_group_name        = azurerm_resource_group.boundary.name
   tenant_id                  = data.azurerm_client_config.current.tenant_id
   enabled_for_deployment     = true
-  soft_delete_enabled        = true
   soft_delete_retention_days = 7
   purge_protection_enabled   = false
 
@@ -21,7 +20,7 @@ resource "azurerm_key_vault" "boundary" {
     default_action             = "Deny"
     bypass                     = "AzureServices"
     ip_rules                   = ["${data.http.my_ip.body}/32"]
-    virtual_network_subnet_ids = [module.vnet.vnet_subnets[0],module.vnet.vnet_subnets[1]]
+    virtual_network_subnet_ids = [module.vnet.vnet_subnets[0], module.vnet.vnet_subnets[1]]
 
   }
 
@@ -86,6 +85,7 @@ resource "azurerm_key_vault_access_policy" "you" {
 
 # Create three keys for root, recovery, and worker
 resource "azurerm_key_vault_key" "keys" {
+  depends_on   = [azurerm_key_vault_access_policy.you]
   for_each     = toset(["root", "worker", "recovery"])
   name         = each.key
   key_vault_id = azurerm_key_vault.boundary.id
@@ -104,6 +104,7 @@ resource "azurerm_key_vault_key" "keys" {
 
 # Create a certificate
 resource "azurerm_key_vault_certificate" "boundary" {
+  depends_on   = [azurerm_key_vault_access_policy.you]
   name         = "boundary"
   key_vault_id = azurerm_key_vault.boundary.id
 
@@ -152,3 +153,7 @@ resource "azurerm_key_vault_certificate" "boundary" {
     }
   }
 }
+
+# Create a service principal with access and output the client ID
+# and the client secret. The credential should only be valid for 
+# 60 minutes

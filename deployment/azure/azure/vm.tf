@@ -65,16 +65,17 @@ data "template_file" "controller" {
   template = file("${path.module}/boundary.tmpl")
 
   vars = {
-    vault_name  = local.vault_name
-    type = "controller"
-    name = "boundary"
-    tenant_id   = data.azurerm_client_config.current.tenant_id
-    db_username = var.db_username
-    db_password = var.db_password
-    db_endpoint = azurerm_postgresql_server.boundary.fqdn
-    db_name = local.pg_name
-    public_ip    = azurerm_public_ip.boundary.ip_address
-    controller_ips = join(",",azurerm_network_interface.controller[*].private_ip_address)
+    vault_name       = local.vault_name
+    type             = "controller"
+    name             = "boundary"
+    boundary_version = var.boundary_version
+    tenant_id        = data.azurerm_client_config.current.tenant_id
+    db_username      = var.db_username
+    db_password      = var.db_password
+    db_endpoint      = azurerm_postgresql_server.boundary.fqdn
+    db_name          = local.pg_name
+    public_ip        = azurerm_public_ip.boundary.ip_address
+    controller_ips   = join(",", azurerm_network_interface.controller[*].private_ip_address)
   }
 }
 
@@ -159,16 +160,17 @@ data "template_file" "worker" {
   template = file("${path.module}/boundary.tmpl")
 
   vars = {
-    vault_name     = local.vault_name
-    type           = "worker"
-    name = "boundary"
-    tenant_id      = data.azurerm_client_config.current.tenant_id
-    public_ip    = azurerm_public_ip.boundary.ip_address
-    controller_ips = join(",",azurerm_network_interface.controller[*].private_ip_address)
-    db_username = var.db_username
-    db_password = var.db_password
-    db_name = local.pg_name
-    db_endpoint = azurerm_postgresql_server.boundary.fqdn
+    vault_name       = local.vault_name
+    type             = "worker"
+    name             = "boundary"
+    boundary_version = var.boundary_version
+    tenant_id        = data.azurerm_client_config.current.tenant_id
+    public_ip        = azurerm_public_ip.boundary.ip_address
+    controller_ips   = join(",", azurerm_network_interface.controller[*].private_ip_address)
+    db_username      = var.db_username
+    db_password      = var.db_password
+    db_name          = local.pg_name
+    db_endpoint      = azurerm_postgresql_server.boundary.fqdn
   }
 }
 

@@ -2,3 +2,5 @@ terraform.tfstate*
 .terraform
 crash.log
 .terraform.lock.hcl
+*.tfplan
+*.pem

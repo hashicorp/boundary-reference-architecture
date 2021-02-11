@@ -32,11 +32,11 @@ resource "azurerm_postgresql_firewall_rule" "boundary" {
 */
 
 resource "azurerm_postgresql_virtual_network_rule" "vnet" {
-  name                                 = "postgresql-vnet-rule"
-  resource_group_name                  = azurerm_resource_group.boundary.name
-  server_name                          = azurerm_postgresql_server.boundary.name
-  subnet_id                            = module.vnet.vnet_subnets[0]
-  
+  name                = "postgresql-vnet-rule"
+  resource_group_name = azurerm_resource_group.boundary.name
+  server_name         = azurerm_postgresql_server.boundary.name
+  subnet_id           = module.vnet.vnet_subnets[0]
+
   # Setting this to true for now, probably not necessary
   ignore_missing_vnet_service_endpoint = true
 }
