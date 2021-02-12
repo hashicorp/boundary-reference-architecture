@@ -83,6 +83,17 @@ resource "azurerm_key_vault_access_policy" "you" {
   ]
 }
 
+resource "azurerm_key_vault_access_policy" "sp" {
+  key_vault_id = azurerm_key_vault.boundary.id
+
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  object_id = azuread_service_principal.recovery_sp.id
+
+  key_permissions = [
+    "get", "list",
+  ]
+}
+
 # Create three keys for root, recovery, and worker
 resource "azurerm_key_vault_key" "keys" {
   depends_on   = [azurerm_key_vault_access_policy.you]

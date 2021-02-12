@@ -102,4 +102,6 @@ locals {
 
   pg_name = "boundary-${random_id.id.hex}"
 
+  sp_name = "boundary-${random_id.id.hex}"
+
 }
