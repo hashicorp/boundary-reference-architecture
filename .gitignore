@@ -4,3 +4,4 @@ crash.log
 .terraform.lock.hcl
 *.tfplan
 *.pem
+*.tfvars

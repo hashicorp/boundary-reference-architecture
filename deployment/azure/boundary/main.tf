@@ -13,6 +13,8 @@ provider "boundary" {
 kms "azurekeyvault" {
     purpose = "recovery"
 	tenant_id     = "${var.tenant_id}"
+  client_id = "${var.client_id}"
+  client_secret = "${var.client_secret}"
     vault_name = "${var.vault_name}"
     key_name = "recovery"
 }

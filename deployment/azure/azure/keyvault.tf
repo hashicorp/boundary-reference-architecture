@@ -71,15 +71,15 @@ resource "azurerm_key_vault_access_policy" "you" {
   object_id = data.azurerm_client_config.current.object_id
 
   key_permissions = [
-    "get", "list", "update", "create", "decrypt", "encrypt", "unwrapKey", "wrapKey", "verify", "sign", "delete",
+    "get", "list", "update", "create", "decrypt", "encrypt", "unwrapKey", "wrapKey", "verify", "sign", "delete","purge",
   ]
 
   secret_permissions = [
-    "get", "list", "set", "delete",
+    "get", "list", "set", "delete", "purge",
   ]
 
   certificate_permissions = [
-    "get", "list", "create", "import", "delete", "update",
+    "get", "list", "create", "import", "delete", "update","purge",
   ]
 }
 
@@ -90,7 +90,7 @@ resource "azurerm_key_vault_access_policy" "sp" {
   object_id = azuread_service_principal.recovery_sp.id
 
   key_permissions = [
-    "get", "list",
+    "get", "list", "wrapKey",
   ]
 }
 
@@ -156,7 +156,7 @@ resource "azurerm_key_vault_certificate" "boundary" {
       ]
 
       subject_alternative_names {
-        dns_names = var.cert_san
+        dns_names = local.cert_san
       }
 
       subject            = "CN=${var.cert_cn}"

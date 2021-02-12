@@ -1,6 +1,6 @@
 variable "location" {
   type    = string
-  default = "East US"
+  default = "eastus"
 }
 
 variable "address_space" {
@@ -103,5 +103,7 @@ locals {
   pg_name = "boundary-${random_id.id.hex}"
 
   sp_name = "boundary-${random_id.id.hex}"
+
+  cert_san = ["boundary-${random_id.id.hex}.${var.location}.cloudapp.azure.com"]
 
 }

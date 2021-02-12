@@ -37,3 +37,7 @@ variable "target_ips" {
 variable "tenant_id" {}
 
 variable "vault_name" {}
+
+variable "client_secret" {}
+
+variable "client_id" {}
