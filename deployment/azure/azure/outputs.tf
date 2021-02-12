@@ -21,3 +21,7 @@ output "client_id" {
 output "client_secret" {
   value = random_password.recovery_sp.result
 }
+
+output "client_ips" {
+  value = azurerm_network_interface.backend[*].private_ip_address
+}

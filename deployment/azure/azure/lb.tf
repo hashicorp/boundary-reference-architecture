@@ -77,3 +77,34 @@ resource "azurerm_lb_rule" "worker" {
   backend_address_pool_id        = azurerm_lb_backend_address_pool.pools["worker"].id
 }
 
+resource "azurerm_lb_nat_rule" "controller" {
+  resource_group_name            = azurerm_resource_group.boundary.name
+  loadbalancer_id                = azurerm_lb.boundary.id
+  name                           = "ssh-controller"
+  protocol                       = "Tcp"
+  frontend_port                  = 2022
+  backend_port                   = 22
+  frontend_ip_configuration_name = "PublicIPAddress"
+}
+
+resource "azurerm_network_interface_nat_rule_association" "controller" {
+  network_interface_id  = azurerm_network_interface.controller[0].id
+  ip_configuration_name = "internal"
+  nat_rule_id           = azurerm_lb_nat_rule.controller.id
+}
+
+resource "azurerm_lb_nat_rule" "worker" {
+  resource_group_name            = azurerm_resource_group.boundary.name
+  loadbalancer_id                = azurerm_lb.boundary.id
+  name                           = "ssh-worker"
+  protocol                       = "Tcp"
+  frontend_port                  = 2023
+  backend_port                   = 22
+  frontend_ip_configuration_name = "PublicIPAddress"
+}
+
+resource "azurerm_network_interface_nat_rule_association" "worker" {
+  network_interface_id  = azurerm_network_interface.worker[0].id
+  ip_configuration_name = "internal"
+  nat_rule_id           = azurerm_lb_nat_rule.worker.id
+}

@@ -41,6 +41,16 @@ variable "worker_vm_size" {
   default = "Standard_D2as_v4"
 }
 
+variable "backend_vm_count" {
+  type    = number
+  default = 1
+}
+
+variable "backend_vm_size" {
+  type    = string
+  default = "Standard_D2as_v4"
+}
+
 variable "worker_vm_count" {
   type    = number
   default = 1
@@ -88,9 +98,11 @@ locals {
 
   controller_asg = "controller-asg-${random_id.id.hex}"
   worker_asg     = "worker-asg-${random_id.id.hex}"
+  backend_asg = "backend-asg-${random_id.id.hex}"
 
   controller_vm = "controller-${random_id.id.hex}"
   worker_vm     = "worker-${random_id.id.hex}"
+  backend_vm     = "backend-${random_id.id.hex}"
 
   controller_user_id = "controller-userid-${random_id.id.hex}"
   worker_user_id     = "worker-userid-${random_id.id.hex}"

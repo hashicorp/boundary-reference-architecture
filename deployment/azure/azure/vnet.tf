@@ -83,7 +83,7 @@ resource "azurerm_network_security_group" "backend_nics" {
   resource_group_name = azurerm_resource_group.boundary.name
 }
 
-# Create application security groups for controllers and workers
+# Create application security groups for controllers, workers, and backend
 
 resource "azurerm_application_security_group" "controller_asg" {
   name                = local.controller_asg
@@ -93,6 +93,12 @@ resource "azurerm_application_security_group" "controller_asg" {
 
 resource "azurerm_application_security_group" "worker_asg" {
   name                = local.worker_asg
+  location            = var.location
+  resource_group_name = azurerm_resource_group.boundary.name
+}
+
+resource "azurerm_application_security_group" "backend_asg" {
+  name                = local.backend_asg
   location            = var.location
   resource_group_name = azurerm_resource_group.boundary.name
 }
