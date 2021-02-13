@@ -1,0 +1,7 @@
+controllers = [
+%{ for ip in formatlist("%s",controller_ips) ~}
+"${ip}",
+%{ endfor ~}
+  ]
+
+  

@@ -135,7 +135,11 @@ worker {
 	public_addr = "${public_ip}"
 	name = "demo-worker-$(hostname)"
 	description = "A default worker created for demonstration"
-	controllers = [${controller_ips}]
+  controllers = [
+%{ for ip in formatlist("%s",controller_ips) ~}
+"${ip}",
+%{ endfor ~}
+  ]
 }
 
 kms "azurekeyvault" {

@@ -126,7 +126,22 @@ resource "azurerm_linux_virtual_machine" "controller" {
     }
   }
 
-  custom_data = base64encode(data.template_file.controller.rendered)
+  #custom_data = base64encode(data.template_file.controller.rendered)
+  custom_data = base64encode(
+    templatefile("${path.module}/boundary.tmpl", {
+    vault_name       = local.vault_name
+    type             = "controller"
+    name             = "boundary"
+    boundary_version = var.boundary_version
+    tenant_id        = data.azurerm_client_config.current.tenant_id
+    public_ip        = azurerm_public_ip.boundary.ip_address
+    controller_ips   = azurerm_network_interface.controller.*.private_ip_address
+    db_username      = var.db_username
+    db_password      = var.db_password
+    db_name          = local.pg_name
+    db_endpoint      = azurerm_postgresql_server.boundary.fqdn
+    })
+  )
 }
 
 ##################### WORKER VM RESOURCES ###################################
@@ -221,7 +236,22 @@ resource "azurerm_linux_virtual_machine" "worker" {
     }
   }
 
-  custom_data = base64encode(data.template_file.worker.rendered)
+  #custom_data = base64encode(data.template_file.worker.rendered)
+  custom_data = base64encode(
+    templatefile("${path.module}/boundary.tmpl", {
+    vault_name       = local.vault_name
+    type             = "worker"
+    name             = "boundary"
+    boundary_version = var.boundary_version
+    tenant_id        = data.azurerm_client_config.current.tenant_id
+    public_ip        = azurerm_public_ip.boundary.ip_address
+    controller_ips   = azurerm_network_interface.controller[*].private_ip_address
+    db_username      = var.db_username
+    db_password      = var.db_password
+    db_name          = local.pg_name
+    db_endpoint      = azurerm_postgresql_server.boundary.fqdn
+    })
+  )
 
   depends_on = [azurerm_linux_virtual_machine.controller]
 }
