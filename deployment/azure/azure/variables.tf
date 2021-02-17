@@ -78,7 +78,7 @@ variable "cert_san" {
 
 variable "boundary_version" {
   type    = string
-  default = "0.1.4"
+  default = "0.1.7"
 }
 
 resource "random_id" "id" {

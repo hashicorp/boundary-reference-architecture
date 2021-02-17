@@ -165,6 +165,3 @@ resource "azurerm_key_vault_certificate" "boundary" {
   }
 }
 
-# Create a service principal with access and output the client ID
-# and the client secret. The credential should only be valid for 
-# 60 minutes
