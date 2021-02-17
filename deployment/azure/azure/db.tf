@@ -1,5 +1,7 @@
 # Create postgresql server
-# Make sure to allow Azure services
+
+# You need to use a GP size or better to support the virtual
+# Network rules. Basic version of Azure Postgres doesn't support it
 resource "azurerm_postgresql_server" "boundary" {
   name                = local.pg_name
   location            = var.location
@@ -21,16 +23,7 @@ resource "azurerm_postgresql_server" "boundary" {
 
 }
 
-/* Commenting out to try using virtual network rule instead
-resource "azurerm_postgresql_firewall_rule" "boundary" {
-  name                = "AllowaccesstoAzureservices"
-  resource_group_name = azurerm_resource_group.boundary.name
-  server_name         = azurerm_postgresql_server.boundary.name
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "0.0.0.0"
-}
-*/
-
+#Lock down access to only the controller subnet
 resource "azurerm_postgresql_virtual_network_rule" "vnet" {
   name                = "postgresql-vnet-rule"
   resource_group_name = azurerm_resource_group.boundary.name

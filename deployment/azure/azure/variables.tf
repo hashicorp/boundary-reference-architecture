@@ -1,3 +1,5 @@
+# The reference architecture creates a new Vnet
+# You might not want a new Vnet. Too bad.
 variable "location" {
   type    = string
   default = "eastus"
@@ -26,6 +28,7 @@ variable "subnet_names" {
   ]
 }
 
+# This seems like a reasonable size, feel free to change
 variable "controller_vm_size" {
   type    = string
   default = "Standard_D2as_v4"
@@ -71,11 +74,6 @@ variable "cert_cn" {
   default = "boundary-azure"
 }
 
-variable "cert_san" {
-  type    = list(string)
-  default = ["boundary-azure.example.com"]
-}
-
 variable "boundary_version" {
   type    = string
   default = "0.1.7"
@@ -98,11 +96,11 @@ locals {
 
   controller_asg = "controller-asg-${random_id.id.hex}"
   worker_asg     = "worker-asg-${random_id.id.hex}"
-  backend_asg = "backend-asg-${random_id.id.hex}"
+  backend_asg    = "backend-asg-${random_id.id.hex}"
 
   controller_vm = "controller-${random_id.id.hex}"
   worker_vm     = "worker-${random_id.id.hex}"
-  backend_vm     = "backend-${random_id.id.hex}"
+  backend_vm    = "backend-${random_id.id.hex}"
 
   controller_user_id = "controller-userid-${random_id.id.hex}"
   worker_user_id     = "worker-userid-${random_id.id.hex}"

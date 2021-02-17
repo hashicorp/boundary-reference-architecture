@@ -1,10 +1,10 @@
 
-# Get your current IP address
+# Get your current IP address to provide access to Key Vault in the network acls
 data "http" "my_ip" {
   url = "http://ifconfig.me"
 }
 
-# Create key vault and access policy for worker and controller nodes
+# Create key vault and access policies
 resource "azurerm_key_vault" "boundary" {
   name                       = local.vault_name
   location                   = var.location
@@ -16,6 +16,8 @@ resource "azurerm_key_vault" "boundary" {
 
   sku_name = "standard"
 
+  # Only allow access to the Key Vault from your public IP address and the controller and 
+  # worker subnets. Also, allows access from Azure Services, which you could probably remove.
   network_acls {
     default_action             = "Deny"
     bypass                     = "AzureServices"
@@ -26,6 +28,9 @@ resource "azurerm_key_vault" "boundary" {
 
 }
 
+# Access policy for controller VMs
+# Uses the Controller user assigned identity
+# This could probably be turned into a count loop or for_each with the worker policy
 resource "azurerm_key_vault_access_policy" "controller" {
   key_vault_id = azurerm_key_vault.boundary.id
 
@@ -45,6 +50,8 @@ resource "azurerm_key_vault_access_policy" "controller" {
   ]
 }
 
+# Access policy for worker VMs
+# Uses the Worker user assigned identity
 resource "azurerm_key_vault_access_policy" "worker" {
   key_vault_id = azurerm_key_vault.boundary.id
 
@@ -64,6 +71,7 @@ resource "azurerm_key_vault_access_policy" "worker" {
   ]
 }
 
+# Access policy allowing your credentials full access to Key Vault
 resource "azurerm_key_vault_access_policy" "you" {
   key_vault_id = azurerm_key_vault.boundary.id
 
@@ -71,7 +79,7 @@ resource "azurerm_key_vault_access_policy" "you" {
   object_id = data.azurerm_client_config.current.object_id
 
   key_permissions = [
-    "get", "list", "update", "create", "decrypt", "encrypt", "unwrapKey", "wrapKey", "verify", "sign", "delete","purge",
+    "get", "list", "update", "create", "decrypt", "encrypt", "unwrapKey", "wrapKey", "verify", "sign", "delete", "purge",
   ]
 
   secret_permissions = [
@@ -79,10 +87,12 @@ resource "azurerm_key_vault_access_policy" "you" {
   ]
 
   certificate_permissions = [
-    "get", "list", "create", "import", "delete", "update","purge",
+    "get", "list", "create", "import", "delete", "update", "purge",
   ]
 }
 
+# Access policy for the generated service principal in azuread.tf
+# Used to allow access to the recovery key for initial Boundary setup
 resource "azurerm_key_vault_access_policy" "sp" {
   key_vault_id = azurerm_key_vault.boundary.id
 
@@ -113,7 +123,7 @@ resource "azurerm_key_vault_key" "keys" {
   ]
 }
 
-# Create a certificate
+# Create a self-signed certificate in Key Vault for workers and controllers
 resource "azurerm_key_vault_certificate" "boundary" {
   depends_on   = [azurerm_key_vault_access_policy.you]
   name         = "boundary"

@@ -1,3 +1,6 @@
+# These outputs are used by the Boundary terraform config as inputs
+# to perform the initial configuration of Boundary
+
 output "vault_name" {
   value = local.vault_name
 }

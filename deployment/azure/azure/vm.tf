@@ -11,6 +11,7 @@ resource "local_file" "private_key" {
 }
 
 # Create User Identities for Controller VMs and Worker VMs
+# Could probably do this with a loop
 resource "azurerm_user_assigned_identity" "controller" {
   resource_group_name = azurerm_resource_group.boundary.name
   location            = var.location
@@ -49,12 +50,14 @@ resource "azurerm_network_interface" "controller" {
   }
 }
 
+# Associate the network interfaces from the controllers with the controller NSG
 resource "azurerm_network_interface_security_group_association" "controller" {
   count                     = var.controller_vm_count
   network_interface_id      = azurerm_network_interface.controller[count.index].id
   network_security_group_id = azurerm_network_security_group.controller_nics.id
 }
 
+# Associate the network interfaces from the controllers with the controller ASG for NSG rules
 resource "azurerm_network_interface_application_security_group_association" "controller" {
   count                         = var.controller_vm_count
   network_interface_id          = azurerm_network_interface.controller[count.index].id
@@ -100,6 +103,7 @@ resource "azurerm_linux_virtual_machine" "controller" {
     identity_ids = [azurerm_user_assigned_identity.controller.id]
   }
 
+  # This makes the Key Vault and TLS certificate available to the VM
   secret {
     key_vault_id = azurerm_key_vault.boundary.id
 
@@ -108,20 +112,20 @@ resource "azurerm_linux_virtual_machine" "controller" {
     }
   }
 
-  #custom_data = base64encode(data.template_file.controller.rendered)
+  #Custom data from the boundary.tmpl file
   custom_data = base64encode(
     templatefile("${path.module}/boundary.tmpl", {
-    vault_name       = local.vault_name
-    type             = "controller"
-    name             = "boundary"
-    boundary_version = var.boundary_version
-    tenant_id        = data.azurerm_client_config.current.tenant_id
-    public_ip        = azurerm_public_ip.boundary.ip_address
-    controller_ips   = azurerm_network_interface.controller.*.private_ip_address
-    db_username      = var.db_username
-    db_password      = var.db_password
-    db_name          = local.pg_name
-    db_endpoint      = azurerm_postgresql_server.boundary.fqdn
+      vault_name       = local.vault_name
+      type             = "controller"
+      name             = "boundary"
+      boundary_version = var.boundary_version
+      tenant_id        = data.azurerm_client_config.current.tenant_id
+      public_ip        = azurerm_public_ip.boundary.ip_address
+      controller_ips   = azurerm_network_interface.controller.*.private_ip_address
+      db_username      = var.db_username
+      db_password      = var.db_password
+      db_name          = local.pg_name
+      db_endpoint      = azurerm_postgresql_server.boundary.fqdn
     })
   )
 }
@@ -141,12 +145,14 @@ resource "azurerm_network_interface" "worker" {
   }
 }
 
+# Associate the network interfaces from the workers with the worker NSG
 resource "azurerm_network_interface_security_group_association" "worker" {
   count                     = var.worker_vm_count
   network_interface_id      = azurerm_network_interface.worker[count.index].id
   network_security_group_id = azurerm_network_security_group.worker_nics.id
 }
 
+# Associate the network interfaces from the workers with the worker ASG for NSG rules
 resource "azurerm_network_interface_application_security_group_association" "worker" {
   count                         = var.worker_vm_count
   network_interface_id          = azurerm_network_interface.worker[count.index].id
@@ -200,20 +206,19 @@ resource "azurerm_linux_virtual_machine" "worker" {
     }
   }
 
-  #custom_data = base64encode(data.template_file.worker.rendered)
   custom_data = base64encode(
     templatefile("${path.module}/boundary.tmpl", {
-    vault_name       = local.vault_name
-    type             = "worker"
-    name             = "boundary"
-    boundary_version = var.boundary_version
-    tenant_id        = data.azurerm_client_config.current.tenant_id
-    public_ip        = azurerm_public_ip.boundary.ip_address
-    controller_ips   = azurerm_network_interface.controller[*].private_ip_address
-    db_username      = var.db_username
-    db_password      = var.db_password
-    db_name          = local.pg_name
-    db_endpoint      = azurerm_postgresql_server.boundary.fqdn
+      vault_name       = local.vault_name
+      type             = "worker"
+      name             = "boundary"
+      boundary_version = var.boundary_version
+      tenant_id        = data.azurerm_client_config.current.tenant_id
+      public_ip        = azurerm_public_ip.boundary.ip_address
+      controller_ips   = azurerm_network_interface.controller[*].private_ip_address
+      db_username      = var.db_username
+      db_password      = var.db_password
+      db_name          = local.pg_name
+      db_endpoint      = azurerm_postgresql_server.boundary.fqdn
     })
   )
 

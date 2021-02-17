@@ -1,3 +1,6 @@
+# Create backend targets as part of the PoC
+# These will all be added to the same host set in Boundary
+
 resource "azurerm_network_interface" "backend" {
   count               = var.backend_vm_count
   name                = "${local.backend_vm}-${count.index}"
@@ -23,6 +26,9 @@ resource "azurerm_network_interface_application_security_group_association" "bac
   application_security_group_id = azurerm_application_security_group.backend_asg.id
 }
 
+# There is no configuration applied here
+# You could add a webserver if you're feeling sassy
+# But then you'd have to add some NSG rules too
 resource "azurerm_linux_virtual_machine" "backend" {
   count               = var.backend_vm_count
   name                = "${local.backend_vm}-${count.index}"

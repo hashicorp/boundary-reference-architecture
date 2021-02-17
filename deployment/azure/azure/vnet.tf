@@ -22,6 +22,8 @@ module "vnet" {
   subnet_prefixes     = var.subnet_prefixes
   subnet_names        = var.subnet_names
 
+  # Service endpoints used for Key Vault and Postgres DB access
+  # Only the controller subnet needs DB access
   subnet_service_endpoints = {
     (var.subnet_names[0]) = ["Microsoft.KeyVault", "Microsoft.Sql"]
     (var.subnet_names[1]) = ["Microsoft.KeyVault"]
@@ -64,6 +66,7 @@ resource "azurerm_subnet_network_security_group_association" "backend" {
 }
 
 # Create Network Security Groups for NICs
+# The associations are in the vm.tf file and remotehosts.tf file
 
 resource "azurerm_network_security_group" "controller_nics" {
   name                = local.controller_nic_nsg
@@ -84,6 +87,7 @@ resource "azurerm_network_security_group" "backend_nics" {
 }
 
 # Create application security groups for controllers, workers, and backend
+# The associations are in the vm.tf file and remotehosts.tf file
 
 resource "azurerm_application_security_group" "controller_asg" {
   name                = local.controller_asg
