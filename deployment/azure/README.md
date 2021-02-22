@@ -8,16 +8,15 @@ This directory contains two deployment examples for Boundary using Terraform. Th
 
 ## Deploy
 To deploy this example:
-- Go into the `/azure` subdirectory
 - Ensure you are logged into Azure (`az login`)
 - Run the following:
 
 ```
 terraform init
-terraform apply
+terraform apply -target module.azure
 ```
 
-You can specify the version of Boundary you would like installed by using the variable `boundary_version`. By default it will use version `0.1.7`.
+This will spin up only the Azure infrastructure by targeting the Azure module. You can specify the version of Boundary you would like installed by using the variable `boundary_version`. By default it will use version `0.1.7`.
 
 Once the infrastructure is finished provisioning, the output will be used to configure boundary. The configuration will create an SSH keypair and a self-signed certificate for TLS. The self-signed certificate is uploaded to the Key Vault. You will need to add the certificate to your trusted certificate authorities to move forward with the Boundary configuration. A future enhancement to the Boundary Terraform provider will allow you to skip TLS certificate validation.
 
@@ -27,14 +26,20 @@ The first controller VM and the first worker VM are accessible via a NAT rule on
 - Once your AZure infra is live, you can SSH to your workers and controllers and see their configuration:
   - `ssh azureuser@<lb-public-ip> -p 2022`
   - `sudo systemctl status boundary-controller`
-  - For workers, the systemd unit is called `boundary-worker`
+  - For workers, the systemd unit is called `boundary-worker` and the port is `2023`
   - The admin console will be available at `https://boundary-#######.<azure_region>.cloudapp.azure.com:9200`
 
 ## Configure Boundary 
-- Create a `terraform.tfvars` file in the `/boundary` directory
-- Copy the output from the Azure configuration into the `terraform.tfvars` file
 - Add the self-signed certificate as a trusted cert on your system
-- Configure boundary using `terraform apply`
+- Configure boundary using `terraform apply` without the `target` flag and including the `boundary_version` variable if you used it.
+
+Example:
+
+```
+terraform apply -var boundary_version=0.1.7
+```
+
+The rest of the value for the Boundary config will come from the Azure module outputs.
 
 ## Login
 - Open the console in a browser and login to the instance using one of the `backend_users` defined in the main.tf 

@@ -36,8 +36,7 @@ private_ip=$(hostname -i | awk '{print $1}')
 # Azure Key Vault for the KMS
 # This config also assumes that you have are using a certificate created by Azure Key Vault
 # or you could source it another way
-#
-# TODO: should mlock be disabled?
+
 %{ if type == "controller"}
 cat <<EOF > ~/boundary-controller.hcl
 disable_mlock = true
