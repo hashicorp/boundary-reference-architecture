@@ -1,5 +1,5 @@
 version: "3.8"
-   
+
 services:
   db:
     image: postgres
@@ -15,9 +15,9 @@ services:
       interval: 3s
       timeout: 5s
       retries: 5
-  
+
   db-init:
-    image: hashicorp/boundary:0.1.1
+    image: hashicorp/boundary:0.1.6
     command: ["database", "init", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
@@ -27,9 +27,9 @@ services:
       db:
         condition: service_healthy
 
-  
+
   boundary:
-    image: hashicorp/boundary:0.1.1
+    image: hashicorp/boundary:0.1.6
     command: ["server", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
