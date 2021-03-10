@@ -16,7 +16,7 @@ terraform init
 terraform apply -target module.azure
 ```
 
-This will spin up only the Azure infrastructure by targeting the Azure module. You can specify the version of Boundary you would like installed by using the variable `boundary_version`. By default it will use version `0.1.7`.
+This will spin up only the Azure infrastructure by targeting the Azure module. You can specify the version of Boundary you would like installed by using the variable `boundary_version`. By default it will use version `0.1.8`.
 
 Once the infrastructure is finished provisioning, the output will be used to configure boundary. The configuration will create an SSH keypair and a self-signed certificate for TLS. The self-signed certificate is uploaded to the Key Vault. You will need to add the certificate to your trusted certificate authorities to move forward with the Boundary configuration. A future enhancement to the Boundary Terraform provider will allow you to skip TLS certificate validation.
 
@@ -36,7 +36,7 @@ The first controller VM and the first worker VM are accessible via a NAT rule on
 Example:
 
 ```
-terraform apply -var boundary_version=0.1.7
+terraform apply -var boundary_version=0.1.8
 ```
 
 The rest of the value for the Boundary config will come from the Azure module outputs.
