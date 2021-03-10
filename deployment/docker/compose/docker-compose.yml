@@ -11,13 +11,12 @@ services:
       - POSTGRES_PASSWORD=postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      #test: ["CMD", "curl", "-f", "http://localhost:5432"]
       interval: 3s
       timeout: 5s
       retries: 5
 
   db-init:
-    image: hashicorp/boundary:0.1.6
+    image: hashicorp/boundary:0.1.8
     command: ["database", "init", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
@@ -29,7 +28,7 @@ services:
 
 
   boundary:
-    image: hashicorp/boundary:0.1.6
+    image: hashicorp/boundary:0.1.8
     command: ["server", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
@@ -39,10 +38,11 @@ services:
       - "9202:9202"
     environment:
       - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
+      - HOSTNAME=boundary
     depends_on:
       - db-init
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      test: ["CMD", "curl", "-f", "http://boundary:9200"]
       interval: 3s
       timeout: 5s
       retries: 5
