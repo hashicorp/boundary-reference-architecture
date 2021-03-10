@@ -11,7 +11,6 @@ services:
       - POSTGRES_PASSWORD=postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      #test: ["CMD", "curl", "-f", "http://localhost:5432"]
       interval: 3s
       timeout: 5s
       retries: 5
@@ -39,10 +38,11 @@ services:
       - "9202:9202"
     environment:
       - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
+      - HOSTNAME=boundary
     depends_on:
       - db-init
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      test: ["CMD", "curl", "-f", "http://boundary:9200"]
       interval: 3s
       timeout: 5s
       retries: 5
