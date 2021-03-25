@@ -1,9 +1,5 @@
-output boundary_api_public_ip {
-  value = google_compute_address.public_controller_api.address
-}
-
-output boundary_api_port {
-  value = var.controller_api_port
+output boundary_url {
+	value = var.tls_disabled == false ? "https://${google_compute_address.public_controller_api.address}:${var.controller_api_port}" : "http://${google_compute_address.public_controller_api.address}:${var.controller_api_port}"
 }
 
 output boundary_api_controller {
@@ -24,4 +20,8 @@ output crypto_ring {
 
 output gcp_project {
 	value = var.project
+}
+
+output target_ip {
+	value = var.enable_target == 0 ? null : google_compute_instance.this[0].network_interface[0].network_ip
 }
