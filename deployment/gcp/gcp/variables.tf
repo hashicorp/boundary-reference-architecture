@@ -155,18 +155,6 @@ variable "boundary_worker_tags" {
   ]
 }
 
-variable "ssh_username" {
-  type        = string
-  description = "The name of the user which you want to set the SSH public certificate for."
-  default     = "ubuntu"
-}
-
-variable "ssh_key_path" {
-  type        = string
-  description = "The absolute path to the public certificate of your SSH key."
-  default     = ""
-}
-
 # Boundary listener variables
 variable "controller_api_port" {
   type        = number
@@ -226,3 +214,21 @@ variable "my_public_ip" {
   default = ""
 }
 
+variable "ssh_username" {
+  type        = string
+  description = "The name of the user which you want to set the SSH public certificate for."
+  default     = "ubuntu"
+}
+
+variable "ssh_key_path" {
+  type        = string
+  description = "The absolute path to the public certificate of your SSH key."
+  default     = ""
+}
+
+#Enable or disable an example target machine.
+variable "enable_target" {
+	type = bool
+	description = "Use to toggle creating a compute instance that can be used as a target for Boundary. Note that to connect you will also need to configure the ssh_key_path variable."
+	default = true
+}
