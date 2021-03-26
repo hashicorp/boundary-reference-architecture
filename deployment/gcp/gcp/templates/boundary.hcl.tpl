@@ -1,6 +1,4 @@
 #!/bin/bash
-
-private_ip=$(hostname -i | awk '{print $1}')
 hostname=$(hostname)
 
 # Install official HashiCorp Repository and install Boundary
@@ -28,13 +26,11 @@ export CLOUDSDK_PYTHON_SITEPACKAGES=1
 # Add the boundary system user and group to ensure we have a no-login
 # user capable of owning and running Boundary
 sudo adduser --system --group boundary || true
-sudo chown boundary:boundary /etc/boundary.d/boundary-${type}.hcl
 sudo chown boundary:boundary /usr/bin/boundary
 
 %{ if type == "controller" }
 gcloud beta privateca certificates create \
   --issuer ${ca_name} \
-	--subject $hostname
 	--issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/api.key \
@@ -44,7 +40,6 @@ gcloud beta privateca certificates create \
 
 gcloud beta privateca certificates create \
   --issuer ${ca_name} \
-	--subject $hostname
 	--issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/controller.key \
@@ -132,7 +127,6 @@ EOF
 %{ if type == "worker" }
 gcloud beta privateca certificates create \
   --issuer ${ca_name} \
-	--subject $hostname
 	--issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/worker.key \
@@ -220,6 +214,7 @@ if [ "${type}" = "controller" ]; then
 fi
 
 # Finish service configuration for boundary and start the service
+sudo chown boundary:boundary /etc/boundary.d/boundary-${type}.hcl
 sudo chmod 664 /etc/systemd/system/boundary-${type}.service
 sudo systemctl daemon-reload
 sudo systemctl enable boundary-${type}
