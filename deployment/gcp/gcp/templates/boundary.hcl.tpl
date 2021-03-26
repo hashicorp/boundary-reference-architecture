@@ -34,6 +34,7 @@ sudo chown boundary:boundary /usr/bin/boundary
 %{ if type == "controller" }
 gcloud beta privateca certificates create \
   --issuer ${ca_name} \
+	--subject $hostname
 	--issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/api.key \
@@ -43,6 +44,7 @@ gcloud beta privateca certificates create \
 
 gcloud beta privateca certificates create \
   --issuer ${ca_name} \
+	--subject $hostname
 	--issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/controller.key \
@@ -130,6 +132,7 @@ EOF
 %{ if type == "worker" }
 gcloud beta privateca certificates create \
   --issuer ${ca_name} \
+	--subject $hostname
 	--issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/worker.key \
