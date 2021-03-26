@@ -9,5 +9,5 @@ EOF
 }
 
 output target_ip {
-	value = module.gcp.target_ip
+	value = [ module.gcp.target_ip ]
 }
