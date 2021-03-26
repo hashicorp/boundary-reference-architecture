@@ -23,5 +23,5 @@ output gcp_project {
 }
 
 output target_ip {
-	value = var.enable_target == 0 ? null : google_compute_instance.this[0].network_interface[0].network_ip
+	value = var.enable_target == 0 ? "Target not deployed, no valid IP address." : [ google_compute_instance.this[0].network_interface[0].network_ip ]
 }
