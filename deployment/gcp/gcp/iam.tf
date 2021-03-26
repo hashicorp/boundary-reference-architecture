@@ -55,6 +55,7 @@ resource "google_kms_crypto_key_iam_policy" "recovery" {
 
 ### IAM policy for certificate generation
 data "google_iam_policy" "cas" {
+	count = var.tls_disabled == true ? 0 : 1
   provider = google-beta
   binding {
     role = "roles/privateca.certificateManager"
@@ -66,32 +67,8 @@ data "google_iam_policy" "cas" {
 }
 
 resource "google_privateca_certificate_authority_iam_policy" "cas" {
+	count = var.tls_disabled == true ? 0 : 1
   provider              = google-beta
-  certificate_authority = google_privateca_certificate_authority.this.id
-  policy_data           = data.google_iam_policy.cas.policy_data
+  certificate_authority = google_privateca_certificate_authority.this[0].id
+  policy_data           = data.google_iam_policy.cas[0].policy_data
 }
-
-### IAM for logging
-data "google_iam_policy" "logging" {
-  provider = google-beta
-  binding {
-    role = "roles/stackdriver.resourceMetadata.writer"
-    members = [
-      "serviceAccount:${google_service_account.boundary_controller.email}",
-      "serviceAccount:${google_service_account.boundary_worker.email}"
-    ]
-  }
-}
-
-# resource "google_compute_instance_iam_policy" "controller_logging" {
-#   instance_name = google_compute_instance_template.controller.name
-#   policy_data = data.google_iam_policy.logging.policy_data
-# }
-
-# resource "google_compute_instance_iam_policy" "worker_logging" {
-#   instance_name = google_compute_instance_template.worker.name
-#   policy_data = data.google_iam_policy.logging.policy_data
-# }
-
-
-

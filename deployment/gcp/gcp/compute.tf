@@ -30,27 +30,23 @@ resource "google_compute_instance_template" "controller" {
   metadata = {
     ssh-keys = local.ssh_key_string
   }
-  metadata_startup_script = templatefile("${path.module}/templates/boundary.hcl.tpl", {
+  metadata_startup_script = templatefile("${path.module}/templates/controller.hcl.tpl", {
     boundary_version               = var.boundary_version
-    type                           = "controller"
-    ca_name                        = google_privateca_certificate_authority.this.certificate_authority_id
-		ca_issuer_location             = var.ca_issuer_location
+    ca_name                        = var.tls_disabled == true ? null : google_privateca_certificate_authority.this[0].certificate_authority_id
+		ca_issuer_location             = var.tls_disabled == true ? null : var.ca_issuer_location
     controller_api_listener_ip     = google_compute_address.public_controller_api.address
     controller_cluster_listener_ip = google_compute_address.public_controller_cluster.address
     controller_api_port            = var.controller_api_port
     controller_cluster_port        = var.controller_cluster_port
-    worker_listener_ip             = google_compute_address.public_worker.address
-    worker_port                    = var.worker_port
     project_id                     = var.project
     public_cluster_address         = google_compute_address.public_controller_cluster.address
-    public_worker_address          = google_compute_address.public_worker.address
     db_endpoint                    = google_sql_database_instance.this.private_ip_address
     db_name                        = google_sql_database.this.name
     db_username                    = var.boundary_database_username
     db_password                    = var.boundary_database_password
     tls_disabled                   = var.tls_disabled
-    tls_key_path                   = var.tls_key_path
-    tls_cert_path                  = var.tls_cert_path
+    tls_key_path                   = var.tls_disabled == true ? null : var.tls_key_path
+    tls_cert_path                  = var.tls_disabled == true ? null : var.tls_cert_path
     kms_key_ring                   = google_kms_key_ring.this.name
     kms_worker_auth_key_id         = google_kms_crypto_key.worker_auth.name
     kms_recovery_key_id            = google_kms_crypto_key.recovery.name
@@ -134,27 +130,18 @@ resource "google_compute_instance_template" "worker" {
   metadata = {
     ssh-keys = local.ssh_key_string
   }
-  metadata_startup_script = templatefile("${path.module}/templates/boundary.hcl.tpl", {
+  metadata_startup_script = templatefile("${path.module}/templates/worker.hcl.tpl", {
     boundary_version               = var.boundary_version
-    type                           = "worker"
-    ca_name                        = google_privateca_certificate_authority.this.certificate_authority_id
-		ca_issuer_location             = var.ca_issuer_location
-    controller_api_listener_ip     = google_compute_address.public_controller_api.address
-    controller_cluster_listener_ip = google_compute_address.public_controller_cluster.address
-    controller_api_port            = var.controller_api_port
-    controller_cluster_port        = var.controller_cluster_port
+    ca_name                        = var.tls_disabled == true ? null : google_privateca_certificate_authority.this[0].certificate_authority_id
+		ca_issuer_location             = var.tls_disabled == true ? null : var.ca_issuer_location
     worker_listener_ip             = google_compute_address.public_worker.address
     worker_port                    = var.worker_port
     project_id                     = var.project
     public_cluster_address         = google_compute_address.public_controller_cluster.address
     public_worker_address          = google_compute_address.public_worker.address
-    db_endpoint                    = google_sql_database_instance.this.private_ip_address
-    db_name                        = google_sql_database.this.name
-    db_username                    = var.boundary_database_username
-    db_password                    = var.boundary_database_password
     tls_disabled                   = var.tls_disabled
-    tls_key_path                   = var.tls_key_path
-    tls_cert_path                  = var.tls_cert_path
+    tls_key_path                   = var.tls_disabled == true ? null : var.tls_key_path
+    tls_cert_path                  = var.tls_disabled == true ? null : var.tls_cert_path
     kms_key_ring                   = google_kms_key_ring.this.name
     kms_worker_auth_key_id         = google_kms_crypto_key.worker_auth.name
     kms_recovery_key_id            = google_kms_crypto_key.recovery.name
