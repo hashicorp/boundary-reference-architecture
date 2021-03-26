@@ -70,14 +70,6 @@ resource "google_compute_region_instance_group_manager" "controller" {
   }
 
   base_instance_name = local.boundary_name
-
-	update_policy {
-		type                         = "PROACTIVE"
-		instance_redistribution_type = "PROACTIVE"
-		minimal_action               = "REPLACE"
-		min_ready_sec                = 50
-		replacement_method           = "RECREATE"
-	}
 }
 
 resource "google_compute_region_autoscaler" "controller" {
@@ -100,14 +92,6 @@ resource "google_compute_region_instance_group_manager" "worker" {
   }
 
   base_instance_name = local.boundary_name
-
-	update_policy {
-		type                         = "PROACTIVE"
-		instance_redistribution_type = "PROACTIVE"
-		minimal_action               = "REPLACE"
-		min_ready_sec                = 50
-		replacement_method           = "RECREATE"
-	}
 }
 
 resource "google_compute_region_autoscaler" "worker" {
