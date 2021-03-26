@@ -152,7 +152,7 @@ resource "google_compute_instance_template" "worker" {
   }
   metadata_startup_script = templatefile("${path.module}/templates/boundary.hcl.tpl", {
     boundary_version               = var.boundary_version
-    type                           = "controller"
+    type                           = "worker"
     ca_name                        = google_privateca_certificate_authority.this.certificate_authority_id
 		ca_issuer_location             = var.ca_issuer_location
     controller_api_listener_ip     = google_compute_address.public_controller_api.address
