@@ -23,7 +23,6 @@ resource "google_privateca_certificate_authority" "this" {
   key_spec {
     algorithm = "RSA_PKCS1_4096_SHA256"
   }
-  disable_on_delete = true
 }
 
 ## Check iam.tf for IAM priveleges related to certificate generation
