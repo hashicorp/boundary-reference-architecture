@@ -96,7 +96,7 @@ resource "google_compute_firewall" "cluster" {
   allow {
     protocol = "tcp"
     ports = [
-      var.controller_api_port
+      var.controller_cluster_port
     ]
   }
   log_config {
@@ -159,6 +159,7 @@ resource "google_compute_firewall" "health_checks" {
     ]
   }
   direction = "INGRESS"
+	target_tags = concat(var.boundary_controller_tags, var.boundary_worker_tags)
 }
 
 resource "google_compute_firewall" "worker" {
