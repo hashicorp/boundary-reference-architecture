@@ -29,6 +29,7 @@ services:
 
   boundary:
     image: hashicorp/boundary:0.1.8
+    hostname: boundary
     command: ["server", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"

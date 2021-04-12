@@ -12,6 +12,7 @@ worker {
   name = "docker-worker"
   description = "A worker for a docker demo"
   address = "boundary"
+  public_addr = "localhost"
 }
 
 listener "tcp" {
