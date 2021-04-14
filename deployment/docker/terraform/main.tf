@@ -1,8 +1,15 @@
 terraform {
   required_providers {
     boundary = {
-      source  = "hashicorp/boundary"
-      version = "1.0.1"
+      # The following are used to set the local provider paths for testing
+      # a locally built provider
+      source  = "localhost/providers/boundary"
+      version = "0.0.1"
+
+      # The following are used to set the paths for running the provider
+      # from the canonical terraform registry
+      # source = "hashicorp/boundary"
+      # version = "1.0.1"
     }
   }
 }
@@ -27,7 +34,6 @@ variable "users" {
     "todd",
     "randy",
     "susmitha",
-    "jeff",
     "pete",
     "harold",
     "patrick",
@@ -92,6 +98,36 @@ resource "boundary_account" "user" {
   login_name     = lower(each.key)
   password       = "foofoofoo"
   auth_method_id = boundary_auth_method.password.id
+}
+
+resource "boundary_auth_method_oidc" "okta" {
+  name                 = "Okta"
+  description          = "OIDC auth method for Okta"
+  scope_id             = boundary_scope.org.id
+  is_primary_for_scope = true
+
+  issuer         = "https://dev-75948842.okta.com"
+  client_id      = "0oakppxah2P9M04eb5d6"
+  client_secret  = "rhmVZZn_FeKbM50dHCu_6fttVw37VDxHGxgNYF9e"
+  api_url_prefix = "https://dev-75948842.okta.com"
+}
+
+resource "boundary_account_oidc" "okta" {
+  name           = "jeff"
+  description    = "OIDC account for Jeff"
+  auth_method_id = boundary_auth_method_oidc.okta.id
+
+  issuer = "https://dev-75948842.okta.com"
+  subjet = "00ujpu30nBw04BqFZ5d6"
+}
+
+resource "boundary_user" "jeff" {
+  name        = "jeff"
+  description = "User resource for jeff"
+  account_ids = [
+    boundary_account_oidc.okta.id
+  ]
+  scope_id = boundary_scope.org.id
 }
 
 resource "boundary_role" "global_anon_listing" {
