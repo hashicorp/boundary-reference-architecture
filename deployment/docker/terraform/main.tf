@@ -118,17 +118,17 @@ resource "boundary_account_oidc" "okta" {
   auth_method_id = boundary_auth_method_oidc.okta.id
 
   issuer = "https://dev-75948842.okta.com"
-  subjet = "00ujpu30nBw04BqFZ5d6"
+  subjet = "0oakppxah2P9M04eb5d6"
 }
 
-resource "boundary_user" "jeff" {
+/*resource "boundary_user" "jeff" {
   name        = "jeff"
   description = "User resource for jeff"
   account_ids = [
     boundary_account_oidc.okta.id
   ]
   scope_id = boundary_scope.org.id
-}
+}*/
 
 resource "boundary_role" "global_anon_listing" {
   scope_id = boundary_scope.global.id
