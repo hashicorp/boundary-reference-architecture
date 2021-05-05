@@ -84,10 +84,11 @@ resource "boundary_auth_method_oidc" "okta" {
   scope_id             = boundary_scope.org.id
   is_primary_for_scope = true
 
-  issuer         = "https://dev-75948842.okta.com"
-  client_id      = "0oakppxah2P9M04eb5d6"
-  client_secret  = "rhmVZZn_FeKbM50dHCu_6fttVw37VDxHGxgNYF9e"
-  api_url_prefix = "http://localhost:9200"
+  issuer             = "https://dev-75948842.okta.com"
+  client_id          = "0oakppxah2P9M04eb5d6"
+  client_secret      = "rhmVZZn_FeKbM50dHCu_6fttVw37VDxHGxgNYF9e"
+  signing_algorithms = ["RS256"]
+  api_url_prefix     = "http://localhost:9200"
 }
 
 resource "boundary_account_oidc" "okta" {
