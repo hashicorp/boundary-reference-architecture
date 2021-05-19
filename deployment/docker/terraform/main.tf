@@ -304,3 +304,7 @@ resource "boundary_target" "mssql" {
     boundary_host_set.local.id
   ]
 }
+
+output "auth_method_id" {
+  value = boundary_auth_method.password.id
+}

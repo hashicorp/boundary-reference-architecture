@@ -60,3 +60,13 @@ PONG
 ```
 
 Explore the other containers such as Cassandra and Mysql (default passwords are set via env vars in the docker-compose.yml file).
+
+## Troubleshooting
+
+### DNS not Recongized on `boundary connect`
+
+If you are having issues connecting to Boundary when running `boundary connect`, it is likely due to the fact that you have no DNS entry for the worker. Add the following to your /etc/hosts file (or `c:\windows\system32\drivers\etc\hosts` on Windows):
+
+```
+127.0.0.1 boundary
+```

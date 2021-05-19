@@ -1,6 +1,6 @@
 variable "boundary_version" {
   type    = string
-  default = "0.1.8"
+  default = "latest"
 }
 
 module "azure" {
