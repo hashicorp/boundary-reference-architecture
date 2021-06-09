@@ -1,0 +1,89 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=boundary
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  db-init:
+    image: hashicorp/boundary:0.2.3
+    command: ["database", "init", "-config", "/boundary/boundary.hcl"]
+    volumes:
+      - "./:/boundary/"
+    environment:
+      - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
+    depends_on:
+      db:
+        condition: service_healthy
+
+
+  boundary:
+    image: hashicorp/boundary:0.2.3
+    hostname: boundary
+    command: ["server", "-config", "/boundary/boundary.hcl"]
+    restart: always
+    volumes:
+      - "./:/boundary/"
+    ports:
+      - "9200:9200"
+      - "9201:9201"
+      - "9202:9202"
+    environment:
+      - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
+      - HOSTNAME=boundary
+    depends_on:
+      - db-init
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://boundary:9200"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+
+# Note: These are not private so that Registrator works.
+# In a real use-case, you would have these be in a private network with the
+# Boundary client, which would redirect all traffic.
+  mysql:
+    image: mysql
+    environment:
+      - 'MYSQL_ROOT_PASSWORD=my-secret-pw'
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+# Consul
+  consul:
+    image: consul:1.9.5
+    #container_name: consul
+    restart: always
+    volumes:
+     - ./server.json:/consul/config/server.json:ro
+    ports:
+      - "8300"
+      - "8400"
+      - "8500:8500"
+      - "8600:8600/tcp"
+      - "8600:8600/udp"
+
+  registrator:
+    image: gliderlabs/registrator:master
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+    command: consul://consul:8500
+    restart: always
+    depends_on:
+      - "consul"
