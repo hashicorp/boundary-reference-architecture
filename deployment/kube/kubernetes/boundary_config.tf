@@ -17,7 +17,7 @@ controller {
 }
 
 worker {
-	name = "kubernete-worker"
+	name = "kubernetes-worker"
 	description = "A worker for a kubernetes demo"
 	address = "localhost"
   controllers = ["localhost"]
