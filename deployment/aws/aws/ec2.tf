@@ -1,3 +1,7 @@
+locals {
+  priv_ssh_key_real = coalesce(var.priv_ssh_key_path,trimsuffix(var.pub_ssh_key_path,".pub"))
+}
+
 resource "aws_key_pair" "boundary" {
   key_name   = "boundary-demo"
   public_key = file(var.pub_ssh_key_path)
@@ -34,7 +38,7 @@ resource "aws_instance" "worker" {
   connection {
     type         = "ssh"
     user         = "ubuntu"
-    private_key  = file("~/.ssh/id_rsa")
+    private_key  = file(local.priv_ssh_key_real)
     host         = self.private_ip
     bastion_host = aws_instance.controller[count.index].public_ip
   }
@@ -111,7 +115,7 @@ resource "aws_instance" "controller" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("~/.ssh/id_rsa")
+    private_key = file(local.priv_ssh_key_real)
     host        = self.public_ip
   }
 
