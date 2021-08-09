@@ -15,7 +15,12 @@ To deploy this example:
 terraform apply -target module.aws -var boundary_bin=<path to your binary>
 ```
 
-If your public SSH key you want to SSH to these hosts are not located at `~/.ssh/id_rsa.pub` then you'll also need to override that value.
+If your public SSH key you want to SSH to these hosts are not located at `~/.ssh/id_rsa.pub` then you'll also need to override that value:
+```
+terraform apply -target module.aws -var boundary_bin=<path to your binary> -var pub_ssh_key_path=<path to your SSH public key>
+```
+
+If the private key is not named the same as the public key but without the .pub suffix and/or is not stored in the same directory, you can use the `priv_ssh_key_path` variable also to point to its location; otherwise its filename will be inferred from the filename of the public key.
 
 ## Verify
 - Once your AWS infra is live, you can SSH to your workers and controllers and see their configuration:

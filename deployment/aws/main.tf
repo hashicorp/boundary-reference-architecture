@@ -2,6 +2,7 @@ module "aws" {
   source           = "./aws"
   boundary_bin     = var.boundary_bin
   pub_ssh_key_path = var.pub_ssh_key_path
+  priv_ssh_key_path = var.priv_ssh_key_path
 }
 
 module "boundary" {
