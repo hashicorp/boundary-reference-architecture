@@ -21,3 +21,7 @@ resource "boundary_target" "backend_servers_website" {
     boundary_host_set.backend_servers.id
   ]
 }
+
+output "ssh_target_id" {
+  value = boundary_target.backend_servers_ssh.id
+}

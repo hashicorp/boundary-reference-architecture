@@ -1,0 +1,13 @@
+boundary_version = "0.5.1"
+
+# Controller settings
+controller_vm_count = 1
+postgres_db_username = "sqladmin"
+postgres_db_password = "B0un4aryPGAdm!n"
+controller_certificate_cn = "boundary-azure-controller"
+controller_region = "eastus"
+use_controller_vnet_for_workers = true
+
+# Worker settings
+worker_vm_count = 1
+worker_region = eastus
