@@ -1,6 +1,10 @@
-provider "aws" {
-  region  = "us-east-1"
-}
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+     }
+   }
+ }
 
 data "aws_availability_zones" "available" {
   state = "available"
