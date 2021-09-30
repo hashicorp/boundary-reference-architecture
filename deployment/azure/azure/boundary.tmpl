@@ -24,9 +24,8 @@ sudo cp $secretsname.crt /etc/pki/tls/boundary/cert.crt
 
 # Get latest boundary binary
 # TODO: pass boundary version through a variable
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get update && sudo apt-get install boundary=${boundary_version} -y
+curl -fsSL -o /usr/bin/boundary https://github.com/vancluever/boundary-hostcatalog-prerelease/releases/download/v0.0.1/boundary-plugin-hostcatalogs-linux-amd64
+chmod 755 /usr/bin/boundary
 
 # Get private ip address
 private_ip=$(hostname -i | awk '{print $1}')
