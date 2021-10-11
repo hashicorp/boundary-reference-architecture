@@ -18,9 +18,13 @@ output "client_id" {
 }
 
 output "client_secret" {
-  value = random_password.recovery_sp.result
+  value = azuread_service_principal_password.recovery_sp.value
 }
 
 output "target_ips" {
   value = azurerm_network_interface.backend[*].private_ip_address
+}
+
+output "public_dns_name" {
+  value = azurerm_public_ip.boundary.fqdn
 }
