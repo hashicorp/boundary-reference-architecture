@@ -2,6 +2,6 @@
 
 import blah
 import blah blah
-Import Blah Blah
-Import blah blah blah
-Import Blah blah
+Import Blah Blah Blah
+import blah blah blah Blah
+import Blah blah Blah Blah Blah
