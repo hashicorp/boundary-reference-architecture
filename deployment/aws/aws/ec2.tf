@@ -4,7 +4,7 @@ locals {
 
 resource "aws_key_pair" "boundary" {
   key_name   = "${var.tag}-${random_pet.test.id}"
-  public_key = /boundary-reference-architecture/deployment/aws/aws/pub-key/id_rsa.pub
+  public_key = "boundary-reference-architecture/deployment/aws/aws/pub-key/id_rsa.pub"
 
   tags = local.tags
 }
