@@ -5,7 +5,7 @@ terraform {
     organization = "public-sector-se-1"
 
     workspaces {
-      name = "boundary-reference-architecture"
+      name = "ATARC_AWS_Infra_ISO_Boundary"
     }
   }
 }
