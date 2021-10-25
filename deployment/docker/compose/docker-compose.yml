@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   db:
-    image: postgres
+    image: postgres:11
     ports:
       - 5432:5432
     environment:
@@ -16,20 +16,22 @@ services:
       retries: 5
 
   db-init:
-    image: hashicorp/boundary:0.1.8
-    command: ["database", "init", "-config", "/boundary/boundary.hcl"]
+    image: hashicorp/boundary:0.6.2
+    command: ["boundary","database", "init", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
     environment:
       - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
+    cap_add:
+      - IPC_LOCK
     depends_on:
       db:
         condition: service_healthy
 
 
   boundary:
-    image: hashicorp/boundary:0.1.8
-    command: ["server", "-config", "/boundary/boundary.hcl"]
+    image: hashicorp/boundary:0.6.2
+    command: ["boundary","server", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
     ports:
@@ -40,7 +42,10 @@ services:
       - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
       - HOSTNAME=boundary
     depends_on:
-      - db-init
+      db-init:
+        condition: service_completed_successfully
+    cap_add:
+      - IPC_LOCK
     healthcheck:
       test: ["CMD", "curl", "-f", "http://boundary:9200"]
       interval: 3s
