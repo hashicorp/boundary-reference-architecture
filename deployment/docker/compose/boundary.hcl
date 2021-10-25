@@ -11,6 +11,9 @@ controller {
 worker {
   name = "docker-worker"
   description = "A worker for a docker demo"
+  // public address 127 because we're portforwarding the connection from docker to host machine.
+  // So for the client running in host machine, the connection ip is 127
+  // If you're using this in a remote server, then the ip should be changed to machine public address, so that your local machine can communicate to this worker.
   public_addr = "127.0.0.1"
 }
 
