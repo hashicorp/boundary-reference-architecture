@@ -11,7 +11,7 @@ controller {
 worker {
   name = "docker-worker"
   description = "A worker for a docker demo"
-  address = "boundary"
+  public_addr = "127.0.0.1"
 }
 
 listener "tcp" {
