@@ -35,6 +35,9 @@ listener "tcp" {
 	tls_disable = true
 }
 
+// Yoy can generate the keys by 
+// `python3 kyegen.py`
+// Ref: https://www.boundaryproject.io/docs/configuration/kms/aead
 kms "aead" {
   purpose = "root"
   aead_type = "aes-gcm"
