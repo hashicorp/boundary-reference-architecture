@@ -16,10 +16,10 @@ services:
       retries: 5
 
   db-init:
-    image: hashicorp/boundary:0.1.8
+    image: hashicorp/boundary:0.7.1
     command: ["database", "init", "-config", "/boundary/boundary.hcl"]
     volumes:
-      - "${PWD}/:/boundary/"
+      - "${PWD}/:/boundary:ro,z"
     environment:
       - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
     depends_on:
@@ -28,7 +28,7 @@ services:
 
 
   boundary:
-    image: hashicorp/boundary:0.1.8
+    image: hashicorp/boundary:0.7.1
     command: ["server", "-config", "/boundary/boundary.hcl"]
     volumes:
       - "${PWD}/:/boundary/"
@@ -40,12 +40,22 @@ services:
       - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
       - HOSTNAME=boundary
     depends_on:
-      - db-init
+      db-init:
+        condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://boundary:9200"]
+      test: ["CMD", "wget", "-O-", "http://boundary:9200"]
       interval: 3s
       timeout: 5s
       retries: 5
+# Boundary controller is the last service to start and may not be fully up 
+# by the time the docker compose command returns, so we force a wait by 
+# depending a placeholder on the controller healthcheck
+  wait:
+    image: busybox:latest
+    command: ["sleep", "1"]
+    depends_on:
+      boundary:
+        condition: service_healthy
 
 # Private Database Targets - not exposed to host network, only available via Boundary
   cassandra:
