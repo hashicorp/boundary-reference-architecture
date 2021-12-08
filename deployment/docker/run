@@ -30,11 +30,11 @@ function login() {
 }
 
 function primary_org_id() {
-  strip $(boundary scopes list -format json | jq  -c '.[] | select(.name | contains("primary")) | .["id"]')
+  strip $(boundary scopes list -format json | jq  -c '.items[] | select(.name | contains("primary")) | .id')
 }
 
 function primary_org_ampw() {
-  strip $(boundary auth-methods list -scope-id $(primary_org_id) -format json | jq -c '.[]["id"]') 
+  strip $(boundary auth-methods list -scope-id $(primary_org_id) -format json | jq -c '.items[].id') 
 }
 
 function strip() {
