@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   db:
-    image: postgres
+    image: postgres:11
     ports:
       - 5432:5432
     environment:
@@ -22,6 +22,8 @@ services:
       - "${PWD}/:/boundary:ro,z"
     environment:
       - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
+    cap_add:
+      - IPC_LOCK
     depends_on:
       db:
         condition: service_healthy
