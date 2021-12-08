@@ -19,7 +19,7 @@ services:
     image: hashicorp/boundary:0.7.1
     command: ["database", "init", "-config", "/boundary/boundary.hcl"]
     volumes:
-      - "${PWD}/:/boundary/"
+      - "${PWD}/:/boundary:ro,z"
     environment:
       - BOUNDARY_PG_URL=postgresql://postgres:postgres@db/boundary?sslmode=disable
     depends_on:
