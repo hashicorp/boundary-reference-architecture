@@ -1,5 +1,5 @@
 # Boundary Deployment Examples
-This directory contains two deployment examples for Boundary using Terraform. The `gcp/` directory contains an example AWS reference architecture codified in Terraform. The `boundary/` directory contains an example Terraform configuration for Boundary using the [Boundary Terraform Provider](https://github.com/hashicorp/terraform-provider-boundary).
+This directory contains two deployment examples for Boundary using Terraform. The `gcp/` directory contains an example GCP reference architecture codified in Terraform. The `boundary/` directory contains an example Terraform configuration for Boundary using the [Boundary Terraform Provider](https://github.com/hashicorp/terraform-provider-boundary).
 
 ## Requirements
 - Terraform 0.13 or later
