@@ -5,6 +5,6 @@ variable "addr" {
 variable "users" {
   type = set(string)
   default = [
-    "jeff",
+    "mark",
   ]
 }

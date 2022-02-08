@@ -1,6 +1,6 @@
-resource "boundary_host_catalog" "databases" {
+resource "boundary_host_catalog_static" "databases" {
   name        = "databases"
   description = "Database targets"
-  type        = "static"
+  # type        = "static"
   scope_id    = boundary_scope.project.id
 }
