@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "boundary" {
 
         init_container {
           name    = "boundary-init"
-          image   = "hashicorp/boundary:0.1.8"
+          image   = "hashicorp/boundary:0.7"
           command = ["/bin/sh", "-c"]
           args    = ["boundary database init -config /boundary/boundary.hcl"]
 
@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "boundary" {
         }
 
         container {
-          image = "hashicorp/boundary:0.1.8"
+          image = "hashicorp/boundary:0.7"
           name  = "boundary"
 
           volume_mount {
