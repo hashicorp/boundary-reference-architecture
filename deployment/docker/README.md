@@ -35,9 +35,11 @@ To stop all containers and start from scratch:
 
 Login to the UI:
   - Open browser to localhost:9200
-  - Login Name: <any user from var.users>
+  - Login Name: <any user from terraform var.users>
   - Password: foofoofoo
   - Auth method ID: find this in the UI when selecting the auth method or from TF output
+
+If you did not use `./run login`, you can also login by hand:
 
 ```bash
 $ boundary authenticate password -login-name jeff -password foofoofoo -auth-method-id <get_from_console_or_tf>
@@ -54,8 +56,16 @@ Authentication information:
 Once the deployment is live, you can connect to the containers (assuming their clients are
 installed on your host system). For example, we'll use [redis-cli](https://redis.io/topics/rediscli) to ping the Redis container via Boundary:
 
+First find the target ID of the redis target:
+
 ```bash
-$ boundary connect -exec redis-cli -target-id ttcp_Mgvxjg8pjP -- -p {{boundary.port}} ping
+boundary targets list -recursive -filter '"/item/name" matches "redis"'
+```
+
+And then connect:
+
+```bash
+$ boundary connect -exec redis-cli -target-id <ttcp_id> -- -p {{boundary.port}} ping
 PONG
 ```
 
