@@ -1,21 +1,25 @@
-# Boundary Deployment Examples
-This directory contains two deployment examples for Boundary using Terraform. The `aws/` directory contains an example AWS reference architecture codified in Terraform. The `boundary/` directory contains an example Terraform configuration for Boundary using the [Boundary Terraform Provider](https://github.com/hashicorp/terraform-provider-boundary).
-
-## Reference
-![](arch.png)
+# Boundary Deployment Example on AWS
+This directory contains two deployment examples for Boundary using Terraform. The `aws/aws/` directory contains an example AWS reference architecture codified in Terraform. The `aws/boundary/` directory contains an example Terraform configuration for Boundary using the [Boundary Terraform Provider](https://github.com/hashicorp/terraform-provider-boundary). This example will deploy 2 controllers, 1 worker, and 1 target.
 
 ## Requirements
 - Terraform 0.13
 - Go 1.15 or later 
 
-## Deploy
-To deploy this example:
+## Setup
 - Make sure you have a local checkout of `github.com/hashicorp/boundary`
 - Build the `boundary` binary for linux using `XC_OSARCH=linux/amd64 make dev` or download from our [release page](https://boundaryproject.io/) on our docs site.
-- In the `deploy/aws` directory, run 
+
+## Deploy
+To deploy this example:
+
+- Clone this repo by running `git clone https://github.com/hashicorp/boundary-reference-architecture.git`
+- Navigate to `boundary-reference-architecture/deployment/aws`
+- Run terraform apply and provide the path to where your binary is stored
+
+For example:
 
 ```
-terraform apply -target module.aws -var boundary_bin=<path to your binary>
+terraform apply -target module.aws -var boundary_bin=/usr/bin
 ```
 
 If your public SSH key you want to SSH to these hosts are not located at `~/.ssh/id_rsa.pub` then you'll also need to override that value:
@@ -59,3 +63,6 @@ Connect to the target in the private subnet via Boundary:
 BOUNDARY_ADDR='http://boundary-test-controller-<random_name>-<sha>.elb.us-east-1.amazonaws.com:9200' \
   boundary connect ssh --username ubuntu -target-id ttcp_<generated_id>
 ```
+
+## Reference
+![](arch.png)
