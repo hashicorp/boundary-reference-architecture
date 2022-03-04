@@ -12,7 +12,7 @@ This directory contains two deployment examples for Boundary using Terraform. Th
 To deploy this example:
 - Make sure you have a local checkout of `github.com/hashicorp/boundary`
 - Build the `boundary` binary for linux using `XC_OSARCH=linux/amd64 make dev` or download from our [release page](https://boundaryproject.io/) on our docs site.
-- In the `example` directory, run 
+- In the `deploy/aws` directory, run 
 
 ```
 terraform apply -target module.aws -var boundary_bin=<path to your binary>
