@@ -1,12 +1,10 @@
-provider "google" {
-  project = "go-gcp-demos"
-  region  = "australia-southeast1"
-}
 
 module "gcp" {
   source       = "./gcp"
   enable_ssh   = false
-  ssh_key_path = "/Users/grant/.ssh/id_rsa.pub"
+  ssh_key_path = var.ssh_key
+  location     = var.region
+  project      = var.project
 }
 
 # module "debugging_example" {
