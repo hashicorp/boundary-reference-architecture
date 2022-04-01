@@ -1,5 +1,5 @@
 # Boundary Deployment Example on AWS
-This directory contains an AWS deployment example for Boundary using Terraform. The `aws/aws/` directory contains an example AWS reference architecture codified in Terraform and will deploy infrastructure consisting of 2 controllers, 1 worker, and 1 target. The `aws/boundary/` directory contains an example Terraform configuration for setting up Boundary resources using the [Boundary Terraform Provider](https://github.com/hashicorp/terraform-provider-boundary).
+This directory contains an AWS deployment example for Boundary using Terraform. The `aws/aws/` directory contains an example AWS reference architecture codified in Terraform and will deploy infrastructure consisting of 2 controllers, 1 worker, and 1 target. The `aws/boundary/` directory contains an example Terraform configuration for setting up and configuring Boundary resources using the [Boundary Terraform Provider](https://github.com/hashicorp/terraform-provider-boundary).
 
 ## Requirements
 - Terraform 0.13
