@@ -55,7 +55,7 @@ resource "google_kms_crypto_key_iam_policy" "recovery" {
 
 ### IAM policy for certificate generation
 data "google_iam_policy" "cas" {
-	count = var.tls_disabled == true ? 0 : 1
+  count    = var.tls_disabled == true ? 0 : 1
   provider = google-beta
   binding {
     role = "roles/privateca.certificateManager"
@@ -67,7 +67,7 @@ data "google_iam_policy" "cas" {
 }
 
 resource "google_privateca_certificate_authority_iam_policy" "cas" {
-	count = var.tls_disabled == true ? 0 : 1
+  count                 = var.tls_disabled == true ? 0 : 1
   provider              = google-beta
   certificate_authority = google_privateca_certificate_authority.this[0].id
   policy_data           = data.google_iam_policy.cas[0].policy_data

@@ -33,7 +33,7 @@ resource "google_compute_instance_template" "controller" {
   metadata_startup_script = templatefile("${path.module}/templates/controller.hcl.tpl", {
     boundary_version               = var.boundary_version
     ca_name                        = var.tls_disabled == true ? null : google_privateca_certificate_authority.this[0].certificate_authority_id
-		ca_issuer_location             = var.tls_disabled == true ? null : var.ca_issuer_location
+    ca_issuer_location             = var.tls_disabled == true ? null : var.ca_issuer_location
     controller_api_listener_ip     = google_compute_address.public_controller_api.address
     controller_cluster_listener_ip = google_compute_address.public_controller_cluster.address
     controller_api_port            = var.controller_api_port
@@ -131,21 +131,21 @@ resource "google_compute_instance_template" "worker" {
     ssh-keys = local.ssh_key_string
   }
   metadata_startup_script = templatefile("${path.module}/templates/worker.hcl.tpl", {
-    boundary_version               = var.boundary_version
-    ca_name                        = var.tls_disabled == true ? null : google_privateca_certificate_authority.this[0].certificate_authority_id
-		ca_issuer_location             = var.tls_disabled == true ? null : var.ca_issuer_location
-    worker_listener_ip             = google_compute_address.public_worker.address
-    worker_port                    = var.worker_port
-    project_id                     = var.project
-    public_cluster_address         = google_compute_address.public_controller_cluster.address
-    public_worker_address          = google_compute_address.public_worker.address
-    tls_disabled                   = var.tls_disabled
-    tls_key_path                   = var.tls_disabled == true ? null : var.tls_key_path
-    tls_cert_path                  = var.tls_disabled == true ? null : var.tls_cert_path
-    kms_key_ring                   = google_kms_key_ring.this.name
-    kms_worker_auth_key_id         = google_kms_crypto_key.worker_auth.name
-    kms_recovery_key_id            = google_kms_crypto_key.recovery.name
-    kms_root_key_id                = google_kms_crypto_key.root.name
+    boundary_version       = var.boundary_version
+    ca_name                = var.tls_disabled == true ? null : google_privateca_certificate_authority.this[0].certificate_authority_id
+    ca_issuer_location     = var.tls_disabled == true ? null : var.ca_issuer_location
+    worker_listener_ip     = google_compute_address.public_worker.address
+    worker_port            = var.worker_port
+    project_id             = var.project
+    public_cluster_address = google_compute_address.public_controller_cluster.address
+    public_worker_address  = google_compute_address.public_worker.address
+    tls_disabled           = var.tls_disabled
+    tls_key_path           = var.tls_disabled == true ? null : var.tls_key_path
+    tls_cert_path          = var.tls_disabled == true ? null : var.tls_cert_path
+    kms_key_ring           = google_kms_key_ring.this.name
+    kms_worker_auth_key_id = google_kms_crypto_key.worker_auth.name
+    kms_recovery_key_id    = google_kms_crypto_key.recovery.name
+    kms_root_key_id        = google_kms_crypto_key.root.name
   })
 
   lifecycle {

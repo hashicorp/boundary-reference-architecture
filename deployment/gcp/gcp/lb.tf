@@ -158,8 +158,8 @@ resource "google_compute_firewall" "health_checks" {
       var.worker_port
     ]
   }
-  direction = "INGRESS"
-	target_tags = concat(var.boundary_controller_tags, var.boundary_worker_tags)
+  direction   = "INGRESS"
+  target_tags = concat(var.boundary_controller_tags, var.boundary_worker_tags)
 }
 
 resource "google_compute_firewall" "worker" {
