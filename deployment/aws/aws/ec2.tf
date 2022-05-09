@@ -53,12 +53,12 @@ resource "aws_instance" "worker" {
 
   provisioner "file" {
     source      = "${var.boundary_bin}/boundary"
-    destination = "~/boundary"
+    destination = "/tmp/boundary"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mv ~/boundary /usr/local/bin/boundary",
+      "sudo mv /tmp/boundary /usr/local/bin/boundary",
       "sudo chmod 0755 /usr/local/bin/boundary",
     ]
   }
@@ -75,22 +75,22 @@ resource "aws_instance" "worker" {
       kms_type               = var.kms_type
       kms_worker_auth_key_id = aws_kms_key.worker_auth.id
     })
-    destination = "~/boundary-worker.hcl"
+    destination = "/tmp/boundary-worker.hcl"
   }
 
   provisioner "remote-exec" {
-    inline = ["sudo mv ~/boundary-worker.hcl /etc/boundary-worker.hcl"]
+    inline = ["sudo mv /tmp/boundary-worker.hcl /etc/boundary-worker.hcl"]
   }
 
   provisioner "file" {
     source      = "${path.module}/install/install.sh"
-    destination = "~/install.sh"
+    destination = "/home/ubuntu/install.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod 0755 ~/install.sh",
-      "sudo ~/./install.sh worker"
+      "sudo chmod 0755 /home/ubuntu/install.sh",
+      "sudo /home/ubuntu/install.sh worker"
     ]
   }
 
@@ -129,12 +129,12 @@ resource "aws_instance" "controller" {
 
   provisioner "file" {
     source      = "${var.boundary_bin}/boundary"
-    destination = "~/boundary"
+    destination = "/tmp/boundary"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo mv ~/boundary /usr/local/bin/boundary",
+      "sudo mv /tmp/boundary /usr/local/bin/boundary",
       "sudo chmod 0755 /usr/local/bin/boundary",
     ]
   }
@@ -152,22 +152,22 @@ resource "aws_instance" "controller" {
       kms_recovery_key_id    = aws_kms_key.recovery.id
       kms_root_key_id        = aws_kms_key.root.id
     })
-    destination = "~/boundary-controller.hcl"
+    destination = "/tmp/boundary-controller.hcl"
   }
 
   provisioner "remote-exec" {
-    inline = ["sudo mv ~/boundary-controller.hcl /etc/boundary-controller.hcl"]
+    inline = ["sudo mv /tmp/boundary-controller.hcl /etc/boundary-controller.hcl"]
   }
 
   provisioner "file" {
     source      = "${path.module}/install/install.sh"
-    destination = "~/install.sh"
+    destination = "/home/ubuntu/install.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod 0755 ~/install.sh",
-      "sudo ~/./install.sh controller"
+      "sudo chmod 0755 /home/ubuntu/install.sh",
+      "sudo sh /home/ubuntu/install.sh controller"
     ]
   }
 
