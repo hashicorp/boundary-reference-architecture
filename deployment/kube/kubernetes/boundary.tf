@@ -95,6 +95,20 @@ resource "kubernetes_deployment" "boundary" {
           port {
             container_port = 9202
           }
+
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 9200
+            }
+          }
+
+          readiness_probe {
+            http_get {
+              path = "/"
+              port = 9200
+            }
+          }
         }
       }
     }
