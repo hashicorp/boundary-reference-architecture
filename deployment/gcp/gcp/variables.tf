@@ -34,7 +34,7 @@ variable "worker_subnet" {
 }
 
 variable "client_source_ranges" {
-  type        = list
+  type        = list(any)
   description = "The source CIDR ranges that should be able to access Boundary."
   default = [
     "0.0.0.0/0"
@@ -42,7 +42,7 @@ variable "client_source_ranges" {
 }
 
 variable "worker_source_ranges" {
-  type        = list
+  type        = list(any)
   description = "A range of IPs/CIDRs for workers NOT deployed with this module that should be able to register with the Boundary controller."
   default     = []
 }
@@ -140,7 +140,7 @@ variable "worker_instance_can_ip_forward" {
 }
 
 variable "boundary_controller_tags" {
-  type        = list
+  type        = list(any)
   description = "A set of tags that are applied to your controllers. Used with security groups."
   default = [
     "boundary-controller"
@@ -148,7 +148,7 @@ variable "boundary_controller_tags" {
 }
 
 variable "boundary_worker_tags" {
-  type        = list
+  type        = list(any)
   description = "A set of tags that are applied to your workers. Used with security groups."
   default = [
     "boundary-worker"
@@ -175,15 +175,15 @@ variable "worker_port" {
 }
 
 # Boundary PKI Variables
-variable ca_organization {
+variable "ca_organization" {
   default = "HashiCorp"
 }
 
-variable ca_common_name {
+variable "ca_common_name" {
   default = "boundary.local"
 }
 
-variable ca_subject_alternate_names {
+variable "ca_subject_alternate_names" {
   default = []
 }
 
@@ -200,9 +200,9 @@ variable "tls_key_path" {
 }
 
 variable "ca_issuer_location" {
-	type = string
-	description = ""
-	default = "asia-east1"
+  type        = string
+  description = ""
+  default     = "asia-east1"
 }
 
 # Debugging variables
@@ -228,7 +228,7 @@ variable "ssh_key_path" {
 
 #Enable or disable an example target machine.
 variable "enable_target" {
-	type = bool
-	description = "Use to toggle creating a compute instance that can be used as a target for Boundary. Note that to connect you will also need to configure the ssh_key_path variable."
-	default = true
+  type        = bool
+  description = "Use to toggle creating a compute instance that can be used as a target for Boundary. Note that to connect you will also need to configure the ssh_key_path variable."
+  default     = true
 }

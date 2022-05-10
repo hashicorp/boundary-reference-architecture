@@ -12,8 +12,7 @@ provider "boundary" {
   recovery_kms_hcl = <<EOT
 kms "awskms" {
 	purpose    = "recovery"
-	key_id     = "global_root"
-  kms_key_id = "${var.kms_recovery_key_id}"
+        kms_key_id = "${var.kms_recovery_key_id}"
 }
 EOT
 }

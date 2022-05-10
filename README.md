@@ -12,3 +12,6 @@ Community contributions to this repository are encouraged and can be added to `d
 
 ## Contents
 - `deployment/`: Contains example configurations for deploying and configuring Boundary. 
+
+## Reference
+![](arch.png)

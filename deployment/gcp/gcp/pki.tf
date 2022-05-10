@@ -1,5 +1,5 @@
 resource "google_privateca_certificate_authority" "this" {
-	count = var.tls_disabled == true ? 0 : 1
+  count                    = var.tls_disabled == true ? 0 : 1
   provider                 = google-beta
   location                 = var.ca_issuer_location
   project                  = var.project
