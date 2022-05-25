@@ -4,7 +4,7 @@ resource "aws_db_instance" "boundary" {
   engine              = "postgres"
   engine_version      = "14.2"
   instance_class      = "db.t3.micro"
-  name                = "boundary"
+  db_name             = "boundary"
   username            = "boundary"
   password            = "boundarydemo"
   skip_final_snapshot = true
