@@ -2,7 +2,7 @@ resource "boundary_user" "backend" {
   for_each    = var.backend_team
   name        = each.key
   description = "Backend user: ${each.key}"
-  account_ids = [boundary_account.backend_user_acct[each.value].id]
+  account_ids = [boundary_account_password.backend_user_acct[each.value].id]
   scope_id    = boundary_scope.org.id
 }
 
@@ -10,7 +10,7 @@ resource "boundary_user" "frontend" {
   for_each    = var.frontend_team
   name        = each.key
   description = "Frontend user: ${each.key}"
-  account_ids = [boundary_account.frontend_user_acct[each.value].id]
+  account_ids = [boundary_account_password.frontend_user_acct[each.value].id]
   scope_id    = boundary_scope.org.id
 }
 
@@ -18,11 +18,11 @@ resource "boundary_user" "leadership" {
   for_each    = var.leadership_team
   name        = each.key
   description = "WARNING: Managers should be read-only"
-  account_ids = [boundary_account.leadership_user_acct[each.value].id]
+  account_ids = [boundary_account_password.leadership_user_acct[each.value].id]
   scope_id    = boundary_scope.org.id
 }
 
-resource "boundary_account" "backend_user_acct" {
+resource "boundary_account_password" "backend_user_acct" {
   for_each       = var.backend_team
   name           = each.key
   description    = "User account for ${each.key}"
@@ -32,7 +32,7 @@ resource "boundary_account" "backend_user_acct" {
   auth_method_id = boundary_auth_method.password.id
 }
 
-resource "boundary_account" "frontend_user_acct" {
+resource "boundary_account_password" "frontend_user_acct" {
   for_each       = var.frontend_team
   name           = each.key
   description    = "User account for ${each.key}"
@@ -42,7 +42,7 @@ resource "boundary_account" "frontend_user_acct" {
   auth_method_id = boundary_auth_method.password.id
 }
 
-resource "boundary_account" "leadership_user_acct" {
+resource "boundary_account_password" "leadership_user_acct" {
   for_each       = var.leadership_team
   name           = each.key
   description    = "User account for ${each.key}"
