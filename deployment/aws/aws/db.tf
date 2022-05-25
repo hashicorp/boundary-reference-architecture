@@ -22,7 +22,7 @@ resource "aws_security_group" "db" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.tag}-db-${random_pet.test.id}"
+    Name = "${var.tag}-db-${random_string.test.id}"
   }
 }
 
@@ -45,10 +45,10 @@ resource "aws_security_group_rule" "allow_any_ingress" {
 }
 
 resource "aws_db_subnet_group" "boundary" {
-  name       = "boundary"
+  name       = lower("boundary-${random_string.test.id}")
   subnet_ids = aws_subnet.public.*.id
 
   tags = {
-    Name = "${var.tag}-db-${random_pet.test.id}"
+    Name = "${var.tag}-db-${random_string.test.id}"
   }
 }

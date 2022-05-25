@@ -24,6 +24,6 @@ resource "aws_acm_certificate" "cert" {
   certificate_body = tls_self_signed_cert.boundary.cert_pem
 
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}"
+    Name = "${var.tag}-${random_string.test.id}"
   }
 }

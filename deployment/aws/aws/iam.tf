@@ -1,5 +1,5 @@
 resource "aws_iam_role" "boundary" {
-  name = "${var.tag}-${random_pet.test.id}"
+  name = "${var.tag}-${random_string.test.id}"
 
   assume_role_policy = <<EOF
 {
@@ -18,17 +18,17 @@ resource "aws_iam_role" "boundary" {
 EOF
 
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}"
+    Name = "${var.tag}-${random_string.test.id}"
   }
 }
 
 resource "aws_iam_instance_profile" "boundary" {
-  name = "${var.tag}-${random_pet.test.id}"
+  name = "${var.tag}-${random_string.test.id}"
   role = aws_iam_role.boundary.name
 }
 
 resource "aws_iam_role_policy" "boundary" {
-  name = "${var.tag}-${random_pet.test.id}"
+  name = "${var.tag}-${random_string.test.id}"
   role = aws_iam_role.boundary.id
 
   policy = <<EOF
