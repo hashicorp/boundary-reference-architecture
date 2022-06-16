@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "boundary" {
 
         init_container {
           name  = "boundary-init"
-          image = "hashicorp/boundary:0.1.8"
+          image = "hashicorp/boundary:0.8.1"
           args = [
             "database",
             "init",
