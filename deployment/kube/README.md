@@ -58,7 +58,9 @@ Run terraform apply against the boundary terraform module using the value for Bo
 address found in the previous command:
 
 ```
-$ terraform apply -target module.boundary -var boundary_addr=<MINIKUBE EXPOSED URL>
+# Set the external address for your service
+export KUBE_SERVICE_ADDRESS=$(echo "http://127.0.0.1:9200")
+terraform apply -target module.boundary -var boundary_addr=$KUBE_SERVICE_ADDRESS
 ```
 
 ### Verify
@@ -87,7 +89,19 @@ some jq foo to to get the correct ID (remember resource ID's are unique, so your
 from the one I get here): 
 
 ```
-$ boundary auth-methods list -scope-id $(boundary scopes list -format json | jq -c ".[] | select(.name | contains(\"primary\")) | .[\"id\"]" | tr -d '"')
+
+boundary scopes list -format json | jq -c ".items[]  | select(.name | contains(\"primary\")) | .[\"id\"]"
+
+$ boundary auth-methods list -scope-id $(boundary scopes list -format json | jq -c ".items[]  | select(.name | contains(\"primary\")) | .[\"id\"]" | tr -d '"')
+
+boundary auth-methods list -scope-id  -format json $(boundary scopes list -format json | jq -c ".items[]  | select(.name | contains(\"primary\")) | .[\"id\"]" | tr -d '"')
+
+# set BOUNDARY_AUTH_METHOD_ID
+
+export BOUNDARY_SCOPE=$(boundary scopes list -keyring-type=none -format json | jq -c ".items[]  | select(.name | contains(\"primary\")) | .[\"id\"]")
+
+export BOUNDARY_AUTH_METHOD_ID=$(boundary auth-methods list -keyring-type=none -format json -scope-id $(boundary scopes list -keyring-type=none -format json | jq -c ".items[]  | select(.name | contains(\"primary\")) | .[\"id\"]" | tr -d '"') | jq -c ".items[] | .id" |  sed -e 's/^"//' | sed -e 's/"$//' )
+
 
 Auth Method information:
   ID:             ampw_1234567890
@@ -100,7 +114,10 @@ Auth Method information:
 Now login:
 
 ```
-$ boundary authenticate password -login-name=jeff -password=foofoofoo -auth-method-id=ampw_1234567890
+$ boundary authenticate password \
+  -login-name=mark \
+  -password=foofoofoo \
+  -auth-method-id=${BOUNDARY_AUTH_METHOD_ID}
 ```
 
 From the UI or the CLI, grab the target ID for the redis container in the databases project. If

@@ -4,11 +4,12 @@ function cleanup() {
   pushd compose
   docker-compose rm -fs 
   popd
-  pushd terraform/
-  rm terraform.tfstate*
-  popd
+  # Purge the TF State
+  rm -rf ./terraform/.terraform
+  rm -rf ./terraform/.terraform.lock.hcl
   exit 0
 }
+
 trap cleanup SIGKILL SIGINT
 
 function init_compose() {
