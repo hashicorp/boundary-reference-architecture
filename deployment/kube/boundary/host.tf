@@ -1,15 +1,15 @@
-resource "boundary_host" "redis" {
+resource "boundary_host_static" "redis" {
   type            = "static"
   name            = "redis"
   description     = "redis container"
   address         = "redis.svc"
-  host_catalog_id = boundary_host_catalog.databases.id
+  host_catalog_id = boundary_host_catalog_static.databases.id
 }
 
-resource "boundary_host" "postgres" {
+resource "boundary_host_static" "postgres" {
   type            = "static"
   name            = "postgres"
   description     = "postgres container"
   address         = "postgres.svc"
-  host_catalog_id = boundary_host_catalog.databases.id
+  host_catalog_id = boundary_host_catalog_static.databases.id
 }

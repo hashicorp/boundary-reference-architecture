@@ -46,7 +46,7 @@ driver "terraform" {
     }
     boundary = {
       source = "hashicorp/boundary"
-      version = "1.0.2"
+      version = "1.0.9"
     }
   }
 }
