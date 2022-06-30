@@ -2,7 +2,7 @@ terraform {
   required_providers {
     boundary = {
       source  = "hashicorp/boundary"
-      version = "1.0.5"
+      version = "1.0.9"
     }
   }
 }
@@ -46,6 +46,8 @@ variable "users" {
     "kris",
     "chris",
     "swarna",
+    "mark",
+    "julia",
   ]
 }
 
@@ -73,25 +75,25 @@ resource "boundary_user" "user" {
   for_each    = var.users
   name        = each.key
   description = "User resource for ${each.key}"
-  account_ids = [boundary_account.user[each.value].id]
+  account_ids = [boundary_account_password.user[each.value].id]
   scope_id    = boundary_scope.org.id
 }
 
-resource "boundary_auth_method" "password" {
+resource "boundary_auth_method_password" "password" {
   name        = "org_password_auth"
   description = "Password auth method for org"
   type        = "password"
   scope_id    = boundary_scope.org.id
 }
 
-resource "boundary_account" "user" {
+resource "boundary_account_password" "user" {
   for_each       = var.users
   name           = each.key
   description    = "User account for ${each.key}"
   type           = "password"
   login_name     = lower(each.key)
   password       = "foofoofoo"
-  auth_method_id = boundary_auth_method.password.id
+  auth_method_id = boundary_auth_method_password.password.id
 }
 
 resource "boundary_role" "global_anon_listing" {
@@ -133,31 +135,31 @@ resource "boundary_role" "proj_admin" {
   )
 }
 
-resource "boundary_host_catalog" "databases" {
+resource "boundary_host_catalog_static" "databases" {
   name        = "databases"
   description = "Database targets"
-  type        = "static"
+  # type        = "static"
   scope_id    = boundary_scope.project.id
 }
 
-resource "boundary_host" "localhost" {
+resource "boundary_host_static" "localhost" {
   type            = "static"
   name            = "localhost"
   description     = "Localhost host"
   address         = "localhost"
-  host_catalog_id = boundary_host_catalog.databases.id
+  host_catalog_id = boundary_host_catalog_static.databases.id
 }
 
 # Target hosts available on localhost: ssh and postgres
 # Postgres is exposed to localhost for debugging of the 
 # Boundary DB from the CLI. Assumes SSHD is running on
 # localhost.
-resource "boundary_host_set" "local" {
+resource "boundary_host_set_static" "local" {
   type            = "static"
   name            = "local"
   description     = "Host set for local servers"
-  host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.localhost.id]
+  host_catalog_id = boundary_host_catalog_static.databases.id
+  host_ids        = [boundary_host_static.localhost.id]
 }
 
 resource "boundary_target" "ssh" {
@@ -168,8 +170,8 @@ resource "boundary_target" "ssh" {
   session_connection_limit = -1
   session_max_seconds      = 2
   default_port             = 22
-  host_set_ids = [
-    boundary_host_set.local.id
+  host_source_ids = [
+    boundary_host_set_static.local.id
   ]
 }
 
@@ -181,26 +183,26 @@ resource "boundary_target" "postgres" {
   session_connection_limit = -1
   session_max_seconds      = 2
   default_port             = 5432
-  host_set_ids = [
-    boundary_host_set.local.id
+  host_source_ids = [
+    boundary_host_set_static.local.id
   ]
 }
 
-resource "boundary_host" "cassandra" {
+resource "boundary_host_static" "cassandra" {
   type        = "static"
   name        = "cassandra"
   description = "Private cassandra container"
   # DNS set via docker-compose
   address         = "cassandra"
-  host_catalog_id = boundary_host_catalog.databases.id
+  host_catalog_id = boundary_host_catalog_static.databases.id
 }
 
-resource "boundary_host_set" "cassandra" {
+resource "boundary_host_set_static" "cassandra" {
   type            = "static"
   name            = "cassandra"
   description     = "Host set for cassandra containers"
-  host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.cassandra.id]
+  host_catalog_id = boundary_host_catalog_static.databases.id
+  host_ids        = [boundary_host_static.cassandra.id]
 }
 
 resource "boundary_target" "cassandra" {
@@ -211,26 +213,26 @@ resource "boundary_target" "cassandra" {
   session_connection_limit = -1
   session_max_seconds      = 2
   default_port             = 7000
-  host_set_ids = [
-    boundary_host_set.cassandra.id
+  host_source_ids = [
+    boundary_host_set_static.cassandra.id
   ]
 }
 
-resource "boundary_host" "mysql" {
+resource "boundary_host_static" "mysql" {
   type        = "static"
   name        = "mysql"
   description = "Private mysql container"
   # DNS set via docker-compose
   address         = "mysql"
-  host_catalog_id = boundary_host_catalog.databases.id
+  host_catalog_id = boundary_host_catalog_static.databases.id
 }
 
-resource "boundary_host_set" "mysql" {
+resource "boundary_host_set_static" "mysql" {
   type            = "static"
   name            = "mysql"
   description     = "Host set for mysql containers"
-  host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.mysql.id]
+  host_catalog_id = boundary_host_catalog_static.databases.id
+  host_ids        = [boundary_host_static.mysql.id]
 }
 
 resource "boundary_target" "mysql" {
@@ -241,26 +243,26 @@ resource "boundary_target" "mysql" {
   session_connection_limit = -1
   session_max_seconds      = 2
   default_port             = 3306
-  host_set_ids = [
-    boundary_host_set.mysql.id
+  host_source_ids = [
+    boundary_host_set_static.mysql.id
   ]
 }
 
-resource "boundary_host" "redis" {
+resource "boundary_host_static" "redis" {
   type        = "static"
   name        = "redis"
   description = "Private redis container"
   # DNS set via docker-compose
   address         = "redis"
-  host_catalog_id = boundary_host_catalog.databases.id
+  host_catalog_id = boundary_host_catalog_static.databases.id
 }
 
-resource "boundary_host_set" "redis" {
+resource "boundary_host_set_static" "redis" {
   type            = "static"
   name            = "redis"
   description     = "Host set for redis containers"
-  host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.redis.id]
+  host_catalog_id = boundary_host_catalog_static.databases.id
+  host_ids        = [boundary_host_static.redis.id]
 }
 
 resource "boundary_target" "redis" {
@@ -271,26 +273,26 @@ resource "boundary_target" "redis" {
   session_connection_limit = -1
   session_max_seconds      = 2
   default_port             = 6379
-  host_set_ids = [
-    boundary_host_set.redis.id
+  host_source_ids = [
+    boundary_host_set_static.redis.id
   ]
 }
 
-resource "boundary_host" "mssql" {
+resource "boundary_host_static" "mssql" {
   type        = "static"
   name        = "mssql"
   description = "Private mssql container"
   # DNS set via docker-compose
   address         = "mssql"
-  host_catalog_id = boundary_host_catalog.databases.id
+  host_catalog_id = boundary_host_catalog_static.databases.id
 }
 
-resource "boundary_host_set" "mssql" {
+resource "boundary_host_set_static" "mssql" {
   type            = "static"
   name            = "mssql"
   description     = "Host set for mssql containers"
-  host_catalog_id = boundary_host_catalog.databases.id
-  host_ids        = [boundary_host.mssql.id]
+  host_catalog_id = boundary_host_catalog_static.databases.id
+  host_ids        = [boundary_host_static.mssql.id]
 }
 resource "boundary_target" "mssql" {
   type                     = "tcp"
@@ -300,7 +302,46 @@ resource "boundary_target" "mssql" {
   session_connection_limit = -1
   session_max_seconds      = 2
   default_port             = 1433
-  host_set_ids = [
-    boundary_host_set.local.id
+  host_source_ids = [
+    boundary_host_set_static.local.id
   ]
+}
+
+
+resource "random_shuffle" "group" {
+  input = [
+    for o in boundary_user.user : o.id
+  ]
+  result_count = floor(length(var.users) / 4)
+  count        = floor(length(var.users) / 2)
+}
+
+resource "random_pet" "group" {
+  length = 2
+  count  = length(var.users) / 2
+}
+
+resource "boundary_group" "group" {
+    for_each = {
+        for k, v in random_shuffle.group : k => v.id
+    }
+    name        = random_pet.group[each.key].id
+    description = "Group: ${random_pet.group[each.key].id}"
+    member_ids = tolist(random_shuffle.group[each.key].result)
+    scope_id = boundary_scope.org.id
+}
+
+output "boundary_auth_method_password" {
+  value = boundary_auth_method_password.password.id
+}
+
+output "boundary_connect_syntax" {
+  value       = <<EOT
+
+# https://learn.hashicorp.com/tutorials/boundary/oss-getting-started-connect?in=boundary/oss-getting-started
+
+boundary authenticate password -login-name mark -auth-method-id ${boundary_auth_method_password.password.id}
+
+EOT
+  description = "Boundary Authenticate"
 }

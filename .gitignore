@@ -21,6 +21,25 @@
 **/id_ecdsa*
 **/id_ed25519*
 
+# Mutant Distros
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+**/Icon
+**/._*
+**/.DocumentRevisions-V100
+**/.fseventsd
+**/.Spotlight-V100
+**/.TemporaryItems
+**/.Trashes
+**/.VolumeIcon.icns
+**/.com.apple.timemachine.donotpresent
+**/.AppleDB
+**/.AppleDesktop
+**/Network Trash Folder
+**/Temporary Items
+**/.apdisk
+
 # Exclude all .tfvars files, which are likely to contain sensitive data, 
 # such as password, private keys, and other secrets. These should not be 
 # part of version control as they are data points which are potentially 
