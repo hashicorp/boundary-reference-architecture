@@ -2,7 +2,7 @@ terraform {
   required_providers {
     boundary = {
       source  = "hashicorp/boundary"
-      version = "1.0.5"
+      version = "1.0.9"
     }
   }
 }
@@ -17,4 +17,9 @@ kms "aead" {
   key_id = "global_recovery"
 }
 EOT
+}
+
+
+output "boundary_auth_method_password" {
+  value = boundary_auth_method_password.password.id
 }
