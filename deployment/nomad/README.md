@@ -135,7 +135,7 @@ path "boundary_kms/decrypt/*" {
 
 ### Persistent data
 
-Use host volumes to store the database in persistant storage
+Use host volumes to store the database in persistent storage.
 
 In the `nomad-config.hcl` file, add:
 
@@ -168,9 +168,6 @@ group "boundary-db" {
   }
 }
 ```
-
-### Redundant controllers
-
 
 ### Other recommendations
 
