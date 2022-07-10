@@ -3,7 +3,7 @@ resource "aws_kms_key" "root" {
   deletion_window_in_days = 10
 
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}"
+    Name = "${var.tag}-${random_string.test.id}"
   }
 }
 
@@ -12,7 +12,7 @@ resource "aws_kms_key" "worker_auth" {
   deletion_window_in_days = 10
 
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}"
+    Name = "${var.tag}-${random_string.test.id}"
   }
 }
 
@@ -21,6 +21,6 @@ resource "aws_kms_key" "recovery" {
   deletion_window_in_days = 10
 
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}"
+    Name = "${var.tag}-${random_string.test.id}"
   }
 }

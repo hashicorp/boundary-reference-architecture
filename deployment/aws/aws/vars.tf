@@ -1,10 +1,11 @@
-resource "random_pet" "test" {
-  length = 1
+resource "random_string" "test" {
+  length  = 5
+  special = false
 }
 
 locals {
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}"
+    Name = "${var.tag}-${random_string.test.id}"
   }
 
   pub_cidrs  = cidrsubnets("10.0.0.0/24", 4, 4, 4, 4)

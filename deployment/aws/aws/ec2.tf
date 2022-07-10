@@ -1,9 +1,9 @@
 locals {
-  priv_ssh_key_real = coalesce(var.priv_ssh_key_path,trimsuffix(var.pub_ssh_key_path,".pub"))
+  priv_ssh_key_real = coalesce(var.priv_ssh_key_path, trimsuffix(var.pub_ssh_key_path, ".pub"))
 }
 
 resource "aws_key_pair" "boundary" {
-  key_name   = "${var.tag}-${random_pet.test.id}"
+  key_name   = "${var.tag}-${random_string.test.id}"
   public_key = file(var.pub_ssh_key_path)
 
   tags = local.tags
@@ -95,7 +95,7 @@ resource "aws_instance" "worker" {
   }
 
   tags = {
-    Name = "${var.tag}-worker-${random_pet.test.id}"
+    Name = "${var.tag}-worker-${random_string.test.id}-${count.index}"
   }
 
   depends_on = [aws_instance.controller]
@@ -172,7 +172,7 @@ resource "aws_instance" "controller" {
   }
 
   tags = {
-    Name = "${var.tag}-controller-${random_pet.test.id}"
+    Name = "${var.tag}-controller-${random_string.test.id}-${count.index}"
   }
 }
 
@@ -180,7 +180,7 @@ resource "aws_security_group" "controller" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.tag}-controller-${random_pet.test.id}"
+    Name = "${var.tag}-controller-${random_string.test.id}"
   }
 }
 
@@ -224,7 +224,7 @@ resource "aws_security_group" "worker" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.tag}-worker-${random_pet.test.id}"
+    Name = "${var.tag}-worker-${random_string.test.id}"
   }
 }
 
@@ -274,6 +274,6 @@ resource "aws_instance" "target" {
   vpc_security_group_ids = [aws_security_group.worker.id]
 
   tags = {
-    Name = "${var.tag}-target-${random_pet.test.id}"
+    Name = "${var.tag}-target-${random_string.test.id}"
   }
 }

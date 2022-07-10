@@ -3,7 +3,6 @@ resource "tls_private_key" "boundary" {
 }
 
 resource "tls_self_signed_cert" "boundary" {
-  key_algorithm   = "RSA"
   private_key_pem = tls_private_key.boundary.private_key_pem
 
   subject {
@@ -25,6 +24,6 @@ resource "aws_acm_certificate" "cert" {
   certificate_body = tls_self_signed_cert.boundary.cert_pem
 
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}"
+    Name = "${var.tag}-${random_string.test.id}"
   }
 }

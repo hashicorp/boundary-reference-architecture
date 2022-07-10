@@ -1,6 +1,5 @@
 provider "aws" {
-  version = "~> 3.0"
-  region  = "us-east-1"
+  region = "us-east-1"
 }
 
 data "aws_availability_zones" "available" {
@@ -30,7 +29,7 @@ resource "aws_subnet" "public" {
   cidr_block        = local.pub_cidrs[count.index]
 
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}-public-${count.index}"
+    Name = "${var.tag}-${random_string.test.id}-public-${count.index}"
   }
 }
 
@@ -41,7 +40,7 @@ resource "aws_subnet" "private" {
   cidr_block        = local.priv_cidrs[count.index]
 
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}-private-${count.index}"
+    Name = "${var.tag}-${random_string.test.id}-private-${count.index}"
   }
 }
 
@@ -63,7 +62,7 @@ resource "aws_route_table" "public" {
   count  = var.num_subnets_public
   vpc_id = aws_vpc.main.id
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}-public-${count.index}"
+    Name = "${var.tag}-${random_string.test.id}-public-${count.index}"
   }
 }
 
@@ -89,7 +88,7 @@ resource "aws_route_table" "private" {
   count  = var.num_subnets_private
   vpc_id = aws_vpc.main.id
   tags = {
-    Name = "${var.tag}-${random_pet.test.id}-private-${count.index}"
+    Name = "${var.tag}-${random_string.test.id}-private-${count.index}"
   }
 }
 
