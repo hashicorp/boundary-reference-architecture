@@ -71,7 +71,7 @@ resource "azurerm_lb_rule" "controller" {
   backend_port                   = 9200
   frontend_ip_configuration_name = "PublicIPAddress"
   probe_id                       = azurerm_lb_probe.controller_9200.id
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.pools["controller"].id
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.pools["controller"].id]
 }
 
 # Add LB rule for the workers
@@ -84,7 +84,7 @@ resource "azurerm_lb_rule" "worker" {
   backend_port                   = 9202
   frontend_ip_configuration_name = "PublicIPAddress"
   probe_id                       = azurerm_lb_probe.worker_9202.id
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.pools["worker"].id
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.pools["worker"].id]
 }
 
 # Add an NAT rule for the controller node using port 2022 

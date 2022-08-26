@@ -10,13 +10,13 @@ terraform {
 provider "boundary" {
   addr             = var.url
   recovery_kms_hcl = <<EOT
-kms "azurekeyvault" {
-    purpose = "recovery"
-	tenant_id     = "${var.tenant_id}"
-  client_id = "${var.client_id}"
-  client_secret = "${var.client_secret}"
-    vault_name = "${var.vault_name}"
-    key_name = "recovery"
+    kms "azurekeyvault" {
+    purpose        = "recovery"
+    tenant_id      = "${var.tenant_id}"
+    client_id      = "${var.client_id}"
+    client_secret  = "${var.client_secret}"
+    vault_name     = "${var.vault_name}"
+    key_name       = "recovery"
 }
 EOT
 }
