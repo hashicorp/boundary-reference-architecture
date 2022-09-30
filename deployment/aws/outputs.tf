@@ -6,10 +6,10 @@ output "target_ips" {
   value = module.aws.target_ips
 }
 
-output "controller_ip" {
+output "controller_ips" {
     value = module.aws.controller_instance_ip.*
 }
 
-output "worker_ip" {
+output "worker_ips" {
     value = module.aws.worker_instance_ip
 }
