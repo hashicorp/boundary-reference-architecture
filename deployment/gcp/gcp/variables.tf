@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Google Cloud provider variables
 variable "project" {
   default = "go-gcp-demos"

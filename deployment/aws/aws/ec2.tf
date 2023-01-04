@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 locals {
   priv_ssh_key_real = coalesce(var.priv_ssh_key_path,trimsuffix(var.pub_ssh_key_path,".pub"))
 }

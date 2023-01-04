@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 data "http" "scopes" {
   url = "http://localhost:9200/v1/scopes"

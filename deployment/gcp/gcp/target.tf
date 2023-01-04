@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "random_shuffle" "this" {
   count        = var.enable_target == 0 ? 0 : 1
   input        = data.google_compute_zones.this.names

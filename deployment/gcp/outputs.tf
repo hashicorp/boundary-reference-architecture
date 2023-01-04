@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "helper_text" {
   value = <<-EOF
 "These outputs assist with running the included boundary configuration. To do so, please take the following steps:

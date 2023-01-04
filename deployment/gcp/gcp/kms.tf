@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "google_kms_key_ring" "this" {
   name     = local.boundary_name
   location = "global"

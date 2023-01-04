@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "boundary_account_password" "user" {
   for_each       = var.users
   name           = lower(each.key)

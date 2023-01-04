@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Installs the boundary as a service for systemd on linux
 TYPE=$1
 NAME=boundary

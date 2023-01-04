@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "google_sql_database_instance" "this" {
   depends_on = [
     google_compute_global_address.this,

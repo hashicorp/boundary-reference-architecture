@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_lb" "controller" {
   name               = "${var.tag}-controller-${random_pet.test.id}"
   load_balancer_type = "network"

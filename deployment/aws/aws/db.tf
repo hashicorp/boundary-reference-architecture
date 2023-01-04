@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_db_instance" "boundary" {
   allocated_storage   = 20
   storage_type        = "gp2"

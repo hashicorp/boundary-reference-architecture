@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Allows anonymous (un-authenticated) users to list and authenticate against any
 # auth method, list the global scope, and read and change password on their account ID
 # at the global scope

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 ## Controller API load balancing
 resource "google_compute_address" "public_controller_api" {
   name = local.boundary_controller_name

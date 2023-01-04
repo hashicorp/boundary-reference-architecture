@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "boundary_user" "backend" {
   for_each    = var.backend_team
   name        = each.key

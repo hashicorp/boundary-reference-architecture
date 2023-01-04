@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # We need to create an Azure AD service principal for use by Boundary
 # to perform the initial configuraiton of Boundary with the recovery
 # key in Azure Key Vault

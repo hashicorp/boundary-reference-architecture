@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "boundary_role" "global_anon_listing" {
   scope_id = boundary_scope.global.id
   grant_strings = [
