@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Inbound rules for controller subnet nsg
 
 resource "azurerm_network_security_rule" "controller_9200" {

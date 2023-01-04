@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 ## We use this to append a unique id on the end of our names to prevent collisions.
 resource "random_id" "this" {
   byte_length = 8

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "boundary_url" {
   value = var.tls_disabled == false ? "https://${google_compute_address.public_controller_api.address}:${var.controller_api_port}" : "http://${google_compute_address.public_controller_api.address}:${var.controller_api_port}"
 }

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 data "google_compute_image" "this" {
   family  = var.compute_image_family
   project = var.compute_image_project

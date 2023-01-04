@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Generate key pair for all VMs
 resource "tls_private_key" "boundary" {
   algorithm = "RSA"

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 # Get your current IP address to provide access to Key Vault in the network acls
 data "http" "my_ip" {

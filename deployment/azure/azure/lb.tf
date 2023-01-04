@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Create a public IP address for the load balancer
 # The domain label is based on the resource group name
 resource "azurerm_public_ip" "boundary" {

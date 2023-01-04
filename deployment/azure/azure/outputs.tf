@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # These outputs are used by the Boundary terraform config as inputs
 # to perform the initial configuration of Boundary
 

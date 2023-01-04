@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 ### Service Account creation for Google Compute Instances
 resource "random_string" "boundary_controller" {
   upper   = false

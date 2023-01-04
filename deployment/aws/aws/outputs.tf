@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "boundary_lb" {
   value = aws_lb.controller.dns_name
 }

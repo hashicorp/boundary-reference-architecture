@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Create backend targets as part of the PoC
 # These will all be added to the same host set in Boundary
 

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "boundary_target" "backend_servers_ssh" {
   type                     = "tcp"
   name                     = "backend_servers_ssh"

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "google_compute_network" "this" {
   name                    = local.boundary_name
   auto_create_subnetworks = false
