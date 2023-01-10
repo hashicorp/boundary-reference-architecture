@@ -27,7 +27,8 @@ function init_terraform() {
 
 # Test with login to Boundary after provisioning
 function login() {
-  boundary authenticate password -login-name jeff -password foofoofoo -auth-method-id $(primary_org_ampw)
+  export PASS=foofoofoo
+  boundary authenticate password -login-name jeff -password env://PASS -auth-method-id $(primary_org_ampw)
 }
 
 function primary_org_id() {
@@ -35,7 +36,7 @@ function primary_org_id() {
 }
 
 function primary_org_ampw() {
-  strip $(boundary auth-methods list -keyring-type=none -scope-id $(primary_org_id) -format json | jq -c '.items[].id') 
+  strip $(boundary auth-methods list -keyring-type=none -scope-id $(primary_org_id) -format json | jq -c '.items[].id')
 }
 
 function strip() {
