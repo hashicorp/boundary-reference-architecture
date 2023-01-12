@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 resource "aws_lb" "controller" {
-  name               = "${var.tag}-controller-${random_pet.test.id}"
+  name               = substr("${var.tag}-controller-${random_pet.test.id}", 0, 31)
   load_balancer_type = "network"
   internal           = false
   subnets            = aws_subnet.public.*.id
@@ -13,7 +13,7 @@ resource "aws_lb" "controller" {
 }
 
 resource "aws_lb_target_group" "controller" {
-  name     = "${var.tag}-controller-${random_pet.test.id}"
+  name     = substr("${var.tag}-controller-${random_pet.test.id}", 0, 31)
   port     = 9200
   protocol = "TCP"
   vpc_id   = aws_vpc.main.id
