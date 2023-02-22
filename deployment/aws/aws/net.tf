@@ -3,7 +3,7 @@
 
 provider "aws" {
   version = "~> 3.0"
-  region  = "us-east-1"
+  region  = "eu-west-2"
 }
 
 data "aws_availability_zones" "available" {

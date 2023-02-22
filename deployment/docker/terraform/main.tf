@@ -5,7 +5,6 @@ terraform {
   required_providers {
     boundary = {
       source  = "hashicorp/boundary"
-      version = "1.0.9"
     }
   }
 }
@@ -343,7 +342,12 @@ output "boundary_connect_syntax" {
 
 # https://learn.hashicorp.com/tutorials/boundary/oss-getting-started-connect?in=boundary/oss-getting-started
 
+export BOUNDARY_ADDR=http://localhost:9200
 boundary authenticate password -login-name mark -auth-method-id ${boundary_auth_method_password.password.id}
+# terraform generated password is foofoofoo
+
+#connect to redis
+boundary connect -exec redis-cli -target-id ${boundary_target.redis.id} -- -p {{boundary.port}} ping
 
 EOT
   description = "Boundary Authenticate"

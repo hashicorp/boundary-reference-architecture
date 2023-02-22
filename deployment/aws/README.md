@@ -8,6 +8,14 @@ This directory contains an AWS deployment example for Boundary using Terraform. 
 ## Setup
 - Make sure you have a local checkout of `github.com/hashicorp/boundary`
 - Build the `boundary` binary for linux using `XC_OSARCH=linux/amd64 make dev` or download from our [release page](https://boundaryproject.io/) on our docs site.
+```bash
+mkdir bin
+cd bin
+export BOUNDARY_VERSION=0.12.0
+curl -O https://releases.hashicorp.com/boundary/$(echo $BOUNDARY_VERSION)/boundary_$(echo $BOUNDARY_VERSION)_linux_amd64.zip
+unzip boundary_$(echo $BOUNDARY_VERSION)_linux_amd64.zip
+rm boundary_$(echo $BOUNDARY_VERSION)_linux_amd64.zip
+```
 - Provide appropriate AWS credentials through the command line
 
 ## Deploy
@@ -16,7 +24,7 @@ To deploy this example:
 1. Clone this repo by running `git clone https://github.com/hashicorp/boundary-reference-architecture.git`
 2. Navigate to `boundary-reference-architecture/deployment/aws`
     
-    If you want to change your AWS region, navigate to `aws/aws/net.tf` and change `region = <new-region>`
+    If you want to change your AWS region, navigate to `aws/aws/net.tf` and change `region = <new-region>` on line 6
     
     In addition, run the command `export AWS_REGION=<new-region>` to set the region in your command line
 3. Run `terraform init`
@@ -25,8 +33,10 @@ To deploy this example:
     For example: `terraform apply -target module.aws -var boundary_bin=/usr/bin`  
 
     If the public SSH key you want use is not located at `~/.ssh/id_rsa.pub` then you'll also need to override that value:
-    ```
-    terraform apply -target module.aws -var boundary_bin=<path to your binary> -var pub_ssh_key_path=<path to your SSH public key>
+    ```bash
+    terraform apply -target module.aws \
+    -var boundary_bin=<path to your binary> \
+    -var pub_ssh_key_path=<path to your SSH public key>
     ```
     If the private key is not named the same as the public key but without the .pub suffix and/or is not stored in the same directory, you can use the `priv_ssh_key_path` variable also to point to its location; otherwise its filename will be inferred from the filename of the public key.
 
@@ -46,7 +56,7 @@ To deploy this example:
 - Login on the CLI: 
 
 ```
-BOUNDARY_ADDR='http://<public-ipv4-dns>:9200' \
+BOUNDARY_ADDR='http://<boundary_address>:9200' \
   boundary authenticate password \
   -login-name=jim \
   -password foofoofoo \
@@ -60,7 +70,7 @@ You can also use this login name in the Boundary console that you navigated to i
 Connect to the target in the private subnet via Boundary:
 
 ```
-BOUNDARY_ADDR='http://<public-ipv4-dns>:9200' \
+BOUNDARY_ADDR='http://<boundary_url>:9200' \
   boundary connect ssh --username ubuntu -target-id ttcp_<generated_id>
 ```
 
