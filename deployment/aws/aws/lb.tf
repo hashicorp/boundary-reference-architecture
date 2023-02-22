@@ -2,18 +2,18 @@
 # SPDX-License-Identifier: MPL-2.0
 
 resource "aws_lb" "controller" {
-  name               = "${var.tag}-controller-${random_pet.test.id}"
+  name               = "${substr("${var.tag}-controller-${random_pet.test.id}", 0, min(length("${var.tag}-controller-${random_pet.test.id}"), 32))}"
   load_balancer_type = "network"
   internal           = false
   subnets            = aws_subnet.public.*.id
 
   tags = {
-    Name = "${var.tag}-controller-${random_pet.test.id}"
+    Name = "${substr("${var.tag}-controller-${random_pet.test.id}", 0, min(length("${var.tag}-controller-${random_pet.test.id}"), 32))}"
   }
 }
 
 resource "aws_lb_target_group" "controller" {
-  name     = "${var.tag}-controller-${random_pet.test.id}"
+  name     = "${substr("${var.tag}-controller-${random_pet.test.id}", 0, min(length("${var.tag}-controller-${random_pet.test.id}"), 32))}"
   port     = 9200
   protocol = "TCP"
   vpc_id   = aws_vpc.main.id
@@ -23,7 +23,7 @@ resource "aws_lb_target_group" "controller" {
     type    = "source_ip"
   }
   tags = {
-    Name = "${var.tag}-controller-${random_pet.test.id}"
+    Name = "${substr("${var.tag}-controller-${random_pet.test.id}", 0, min(length("${var.tag}-controller-${random_pet.test.id}"), 32))}"
   }
 }
 

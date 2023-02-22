@@ -1,6 +1,15 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+  }
+}
+
 module "aws" {
   source           = "./aws"
   boundary_bin     = var.boundary_bin
