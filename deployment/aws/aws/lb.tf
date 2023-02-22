@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 resource "aws_lb" "controller" {
+  # Truncate any characters of name that are longer than 32 characters which is the limit imposed by Amazon for the name of a load balancer
   name               = "${substr("${var.tag}-controller-${random_pet.test.id}", 0, min(length("${var.tag}-controller-${random_pet.test.id}"), 32))}"
   load_balancer_type = "network"
   internal           = false
