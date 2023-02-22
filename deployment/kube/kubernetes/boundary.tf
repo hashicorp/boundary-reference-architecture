@@ -127,7 +127,7 @@ resource "kubernetes_service" "boundary_controller" {
   }
 
   spec {
-    type = "ClusterIP"
+    type = "LoadBalancer"
     selector = {
       app = "boundary"
     }

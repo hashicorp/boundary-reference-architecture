@@ -6,7 +6,6 @@ resource "tls_private_key" "boundary" {
 }
 
 resource "tls_self_signed_cert" "boundary" {
-  key_algorithm   = "RSA"
   private_key_pem = tls_private_key.boundary.private_key_pem
 
   subject {

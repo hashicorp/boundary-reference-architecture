@@ -20,10 +20,15 @@ output "boundary_auth_method_id" {
 
 output "boundary_connect_syntax" {
   value       = <<EOT
-
+  
 # https://learn.hashicorp.com/tutorials/boundary/oss-getting-started-connect?in=boundary/oss-getting-started
 
-boundary authenticate password -login-name mark -auth-method-id ${module.boundary.boundary_auth_method_password}
+export BOUNDARY_ADDR=http://localhost:9200
+boundary authenticate password -login-name mark -auth-method-id ${module.boundary.boundary_auth_method_id}
+# terraform generated password is foofoofoo
+
+#connect to redis
+boundary connect -exec redis-cli -target-id ${module.boundary.boundary_redis_target_id} -- -h {{boundary.ip}} -p {{boundary.port}}
 
 EOT
   description = "Boundary Authenticate"

@@ -36,7 +36,7 @@ Run terraform apply against the kubernetes terraform module:
 $ terraform apply -target module.kubernetes
 ```
 
-Expose all 3 Boundary services running on minikube, on your local host using `kubectl port-forward` (you'll
+use minikube tunnel or expose all 3 Boundary services running on minikube, on your local host using `kubectl port-forward` (you'll
 need to do this in 3 separate long running shells):
 
 ```
