@@ -56,7 +56,7 @@ To deploy this example:
 - Login on the CLI: 
 
 ```
-BOUNDARY_ADDR='http://<boundary_url>:9200' \
+BOUNDARY_ADDR='http://<boundary_address>:9200' \
   boundary authenticate password \
   -login-name=jim \
   -password foofoofoo \
