@@ -33,7 +33,7 @@ resource "boundary_target" "MyTarget" {
   scope_id                 = boundary_scope.MyProject.id
   name                     = "MyTargetName"
   type                     = "tcp"
-  default_port             = "22"                   # Replace with port
   address                  = "127.0.0.1"            # Replace with address
+  default_port             = "22"                   # Replace with port
 }
 
