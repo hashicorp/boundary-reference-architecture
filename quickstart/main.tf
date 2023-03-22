@@ -1,3 +1,8 @@
+# This Terraform script for HCP/OSS Boundary sets up the basic Org, Project, and Target. 
+# Prerequisites: The Boundary cluster must be deployed.
+#
+# Note: This script is only for learning purposes and is not recommended for a production deployment
+
 terraform {
   required_providers {
     boundary = {
@@ -7,6 +12,7 @@ terraform {
   }
 }
 
+# Boundary deployment information
 provider "boundary" {
   addr   = "https://xxxx.boundary.hashicorp.cloud"   # Replace with cluster URL
   auth_method_id                  = "ampw_xxxxxxx"   # Replace with auth method ID
@@ -14,21 +20,21 @@ provider "boundary" {
   password_auth_method_password   = "password"       # Replace with password
 }
 
-# Org Scope
+# Org scope setup, which belongs to the global scope
 resource "boundary_scope" "MyOrg" {
   scope_id                 = "global"
   name                     = "MyOrgName"
   auto_create_admin_role   = true
 }
 
-# Project Scope
+# Project scope setup, which belongs to the MyOrg scope
 resource "boundary_scope" "MyProject" {
   scope_id                 = boundary_scope.MyOrg.id
   name                     = "MyProjectName"
   auto_create_admin_role   = true
 }
 
-# Target
+# Target setup, which belongs to the MyProject scope
 resource "boundary_target" "MyTarget" {
   scope_id                 = boundary_scope.MyProject.id
   name                     = "MyTargetName"
