@@ -12,7 +12,7 @@ terraform {
   }
 }
 
-# Boundary deployment information
+# Boundary cluster information
 provider "boundary" {
   addr   = "https://xxxx.boundary.hashicorp.cloud"   # Replace with cluster URL
   auth_method_id                  = "ampw_xxxxxxx"   # Replace with auth method ID
