@@ -9,11 +9,12 @@ on popular cloud and container platforms. They're not officially supported modul
 here as a starting point and assume end-users have experience with each example platform.
 
 ## Contributing
-Community contributions to this repository are encouraged and can be added to `deployment/`.
+Community contributions to this repository are encouraged and can be added to `deployment/` and `configuration/`.
 
 
 ## Contents
-- `deployment/`: Contains example configurations for deploying and configuring Boundary. 
+- `deployment/`: Contains example configurations for deploying and configuring Boundary.
+- `configuration/`: Contains examples for configuring Boundary resources assuming you already have a deployed environment, such as for HCP Boundary and Dev mode. 
 
 ## Reference
 ![](arch.png)
