@@ -1,6 +1,6 @@
 # This Terraform script for HCP/OSS Boundary sets up the basic Org, Project, and Target. 
-# Prerequisites: The Boundary cluster must be deployed.
 #
+# Prerequisites: The Boundary cluster must be deployed.
 # Note: This script is only for learning purposes and is not recommended for a production deployment
 
 terraform {
