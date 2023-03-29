@@ -24,7 +24,7 @@ resource "azurerm_key_vault" "boundary" {
   network_acls {
     default_action             = "Deny"
     bypass                     = "AzureServices"
-    ip_rules                   = ["${data.http.my_ip.body}/32"]
+    ip_rules                   = ["${data.http.my_ip.response_body}/32"]
     virtual_network_subnet_ids = [module.vnet.vnet_subnets[0], module.vnet.vnet_subnets[1]]
 
   }
@@ -78,8 +78,8 @@ resource "azurerm_key_vault_access_policy" "worker" {
 resource "azurerm_key_vault_access_policy" "you" {
   key_vault_id = azurerm_key_vault.boundary.id
 
-  tenant_id = data.azurerm_client_config.current.tenant_id
-  object_id = data.azurerm_client_config.current.object_id
+  tenant_id = data.azuread_client_config.current.tenant_id
+  object_id = data.azuread_client_config.current.object_id
 
   key_permissions = [
     "get", "list", "update", "create", "decrypt", "encrypt", "unwrapKey", "wrapKey", "verify", "sign", "delete", "purge",
