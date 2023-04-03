@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # This Terraform script for HCP/OSS Boundary sets up a new fully-privileged user with a new password auth method.
 # A user must be associated with an account, which belongs to an auth method. For a user to have full permissions
 # at each scope level, the user must be added to a role in each scope. 
