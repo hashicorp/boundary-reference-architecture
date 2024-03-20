@@ -48,9 +48,9 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_eip" "nat" {
-  count = var.num_subnets_private
-  vpc   = true
-  tags  = local.tags
+  count  = var.num_subnets_private
+  domain = "vpc"
+  tags   = local.tags
 }
 
 resource "aws_nat_gateway" "private" {
