@@ -7,9 +7,9 @@
 resource "boundary_role" "global_anon_listing" {
   scope_id = boundary_scope.global.id
   grant_strings = [
-    "id=*;type=auth-method;actions=list,authenticate",
+    "ids=*;type=auth-method;actions=list,authenticate",
     "type=scope;actions=list",
-    "id={{account.id}};actions=read,change-password"
+    "ids={{account.id}};actions=read,change-password"
   ]
   principal_ids = ["u_anon"]
 }
@@ -20,9 +20,9 @@ resource "boundary_role" "global_anon_listing" {
 resource "boundary_role" "org_anon_listing" {
   scope_id = boundary_scope.org.id
   grant_strings = [
-    "id=*;type=auth-method;actions=list,authenticate",
+    "ids=*;type=auth-method;actions=list,authenticate",
     "type=scope;actions=list",
-    "id={{account.id}};actions=read,change-password"
+    "ids={{account.id}};actions=read,change-password"
   ]
   principal_ids = ["u_anon"]
 }
@@ -33,7 +33,7 @@ resource "boundary_role" "org_admin" {
   scope_id       = boundary_scope.global.id
   grant_scope_id = boundary_scope.org.id
   grant_strings = [
-    "id=*;type=*;actions=*"
+    "ids=*;type=*;actions=*"
   ]
   principal_ids = concat(
     [for user in boundary_user.backend : user.id],
@@ -51,7 +51,7 @@ resource "boundary_role" "org_readonly" {
     boundary_group.leadership.id
   ]
   grant_strings = [
-    "id=*;type=*;actions=read"
+    "ids=*;type=*;actions=read"
   ]
   scope_id       = boundary_scope.global.id
   grant_scope_id = boundary_scope.org.id
@@ -64,7 +64,7 @@ resource "boundary_role" "project_admin" {
   scope_id       = boundary_scope.org.id
   grant_scope_id = boundary_scope.core_infra.id
   grant_strings = [
-    "id=*;type=*;actions=*"
+    "ids=*;type=*;actions=*"
   ]
   principal_ids = concat(
     [for user in boundary_user.backend : user.id],
