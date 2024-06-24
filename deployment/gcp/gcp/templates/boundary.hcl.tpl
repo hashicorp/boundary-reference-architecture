@@ -18,9 +18,9 @@ mkdir /etc/boundary.d
 mkdir /etc/boundary.d/tls
 
 # Install cryptography module so we can request auto-generated certs from Google CAS
-sudo apt-get install python-pip -y
+sudo apt-get install python3 python3-pip -y
 pip install --user "cryptography>=2.2.0"
-export CLOUDSDK_PYTHON=python
+export CLOUDSDK_PYTHON=python3
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
 # Add the boundary system user and group to ensure we have a no-login
@@ -29,23 +29,21 @@ sudo adduser --system --group boundary || true
 sudo chown boundary:boundary /usr/bin/boundary
 
 %{ if type == "controller" }
-gcloud beta privateca certificates create \
-  --issuer ${ca_name} \
-	--issuer-location ${ca_issuer_location} \
+gcloud privateca certificates create \
+  --issuer-pool ${ca_pool} \
+  --issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/api.key \
   --cert-output-file ${tls_cert_path}/api.crt \
   --ip-san ${controller_api_listener_ip} \
-  --reusable-config "leaf-server-tls"
 
-gcloud beta privateca certificates create \
-  --issuer ${ca_name} \
-	--issuer-location ${ca_issuer_location} \
+gcloud privateca certificates create \
+  --issuer-pool ${ca_pool} \
+  --issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/controller.key \
   --cert-output-file ${tls_cert_path}/controller.crt \
   --ip-san ${controller_cluster_listener_ip} \
-  --reusable-config "leaf-server-tls"
 export CLOUDSDK_PYTHON_SITEPACKAGES=0
 
 # Take ownership of certificates
@@ -125,14 +123,13 @@ EOF
 %{ endif }
 
 %{ if type == "worker" }
-gcloud beta privateca certificates create \
-  --issuer ${ca_name} \
-	--issuer-location ${ca_issuer_location} \
+gcloud privateca certificates create \
+  --issuer-pool ${ca_pool} \
+  --issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/worker.key \
   --cert-output-file ${tls_cert_path}/worker.crt \
   --ip-san ${worker_listener_ip} \
-  --reusable-config "leaf-server-tls"
 export CLOUDSDK_PYTHON_SITEPACKAGES=0
 
 # Take ownership of certificates

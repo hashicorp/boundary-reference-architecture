@@ -93,7 +93,7 @@ variable "database_tier" {
 variable "compute_image_family" {
   type        = string
   description = "The name of the family which you source your image from. This module leverages apt for software installation, so your choice should be a debian based distro."
-  default     = "ubuntu-1804-lts"
+  default     = "ubuntu-2204-lts"
 }
 
 variable "compute_image_project" {
@@ -205,7 +205,7 @@ variable "tls_key_path" {
 variable "ca_issuer_location" {
   type        = string
   description = ""
-  default     = "asia-east1"
+  default     = "us-central1"
 }
 
 # Debugging variables
