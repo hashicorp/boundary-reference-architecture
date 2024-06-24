@@ -5,14 +5,14 @@
 resource "random_string" "boundary_controller" {
   upper   = false
   special = false
-  number  = false
+  numeric = false
   length  = 16
 }
 
 resource "random_string" "boundary_worker" {
   upper   = false
   special = false
-  number  = false
+  numeric = false
   length  = 16
 }
 
@@ -38,6 +38,15 @@ data "google_iam_policy" "kms" {
       "serviceAccount:${google_service_account.boundary_worker.email}"
     ]
   }
+  binding {
+    role = "roles/cloudkms.viewer"
+
+    members = [
+      "serviceAccount:${google_service_account.boundary_controller.email}",
+      "serviceAccount:${google_service_account.boundary_worker.email}"
+    ]
+  }
+
 }
 
 resource "google_kms_crypto_key_iam_policy" "root" {
@@ -59,7 +68,6 @@ resource "google_kms_crypto_key_iam_policy" "recovery" {
 ### IAM policy for certificate generation
 data "google_iam_policy" "cas" {
   count    = var.tls_disabled == true ? 0 : 1
-  provider = google-beta
   binding {
     role = "roles/privateca.certificateManager"
     members = [
@@ -69,9 +77,18 @@ data "google_iam_policy" "cas" {
   }
 }
 
-resource "google_privateca_certificate_authority_iam_policy" "cas" {
-  count                 = var.tls_disabled == true ? 0 : 1
-  provider              = google-beta
-  certificate_authority = google_privateca_certificate_authority.this[0].id
-  policy_data           = data.google_iam_policy.cas[0].policy_data
+
+data "google_iam_policy" "admin" {
+  binding {
+    role = "roles/privateca.certificateManager"
+    members = [
+      "serviceAccount:${google_service_account.boundary_controller.email}",
+      "serviceAccount:${google_service_account.boundary_worker.email}"
+    ]
+  }
+}
+
+resource "google_privateca_ca_pool_iam_policy" "policy" {
+  ca_pool = google_privateca_ca_pool.default.id
+  policy_data = data.google_iam_policy.admin.policy_data
 }

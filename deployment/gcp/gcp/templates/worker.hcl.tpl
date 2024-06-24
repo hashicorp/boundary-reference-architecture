@@ -23,20 +23,19 @@ sudo chown boundary:boundary /usr/bin/boundary
 
 %{ if tls_disabled == false }
 # Install cryptography module so we can request auto-generated certs from Google CAS
-sudo apt-get install python-pip -y
+sudo apt-get install python3 python3-pip -y
 mkdir /etc/boundary.d/tls
 pip install --user "cryptography>=2.2.0"
-export CLOUDSDK_PYTHON=python
+export CLOUDSDK_PYTHON=python3
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
 
 gcloud beta privateca certificates create \
-  --issuer ${ca_name} \
-	--issuer-location ${ca_issuer_location} \
+  --issuer-pool ${ca_pool} \
+  --issuer-location ${ca_issuer_location} \
   --generate-key \
   --key-output-file ${tls_key_path}/worker.key \
   --cert-output-file ${tls_cert_path}/worker.crt \
   --ip-san ${worker_listener_ip} \
-  --reusable-config "leaf-server-tls"
 export CLOUDSDK_PYTHON_SITEPACKAGES=0
 
 # Take ownership of certificates

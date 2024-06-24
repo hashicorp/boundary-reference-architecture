@@ -35,6 +35,7 @@ resource "google_compute_instance_template" "controller" {
   }
   metadata_startup_script = templatefile("${path.module}/templates/controller.hcl.tpl", {
     boundary_version               = var.boundary_version
+    ca_pool                        = var.tls_disabled == true ? null : google_privateca_ca_pool.default.name
     ca_name                        = var.tls_disabled == true ? null : google_privateca_certificate_authority.this[0].certificate_authority_id
     ca_issuer_location             = var.tls_disabled == true ? null : var.ca_issuer_location
     controller_api_listener_ip     = google_compute_address.public_controller_api.address
@@ -135,6 +136,7 @@ resource "google_compute_instance_template" "worker" {
   }
   metadata_startup_script = templatefile("${path.module}/templates/worker.hcl.tpl", {
     boundary_version       = var.boundary_version
+    ca_pool                = var.tls_disabled == true ? null : google_privateca_ca_pool.default.name
     ca_name                = var.tls_disabled == true ? null : google_privateca_certificate_authority.this[0].certificate_authority_id
     ca_issuer_location     = var.tls_disabled == true ? null : var.ca_issuer_location
     worker_listener_ip     = google_compute_address.public_worker.address
