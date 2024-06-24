@@ -4,11 +4,10 @@
 
 module "gcp" {
   source       = "./gcp"
-  enable_ssh   = true
+  enable_ssh   = false
   ssh_key_path = var.ssh_key
   location     = var.region
   project      = var.project
-  my_public_ip = "72.194.116.166/32"
 }
 
 # module "debugging_example" {
