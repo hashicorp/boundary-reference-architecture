@@ -1,4 +1,4 @@
-# Copyright (c) HashiCorp, Inc.
+# Copyright IBM Corp. 2020, 2023
 # SPDX-License-Identifier: MPL-2.0
 
 # We need to create an Azure AD service principal for use by Boundary
