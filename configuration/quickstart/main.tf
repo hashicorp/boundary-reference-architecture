@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # This Terraform script for HCP/OSS Boundary sets up the basic Org, Project, and Target. 
 #
 # Prerequisites: The Boundary cluster must be deployed.
