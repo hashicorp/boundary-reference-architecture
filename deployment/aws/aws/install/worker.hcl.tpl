@@ -18,9 +18,9 @@ worker {
 	public_addr = "${public_ip}"
 	name = "demo-worker-${name_suffix}"
 	description = "A default worker created for demonstration"
-	controllers = [
+	initial_upstreams = [
 %{ for ip in controller_ips ~}
-    "${ip}",
+    "${ip}:9201",
 %{ endfor ~}
   ]
 }
