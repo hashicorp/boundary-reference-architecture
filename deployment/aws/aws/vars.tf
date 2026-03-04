@@ -65,3 +65,7 @@ variable "tls_disabled" {
 variable "kms_type" {
   default = "aws"
 }
+
+variable "aws_region" {
+  default = "us-west-2"
+}
