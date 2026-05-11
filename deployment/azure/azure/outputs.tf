@@ -1,4 +1,4 @@
-# Copyright IBM Corp. 2020, 2023
+# Copyright IBM Corp. 2020, 2026
 # SPDX-License-Identifier: MPL-2.0
 
 # These outputs are used by the Boundary terraform config as inputs

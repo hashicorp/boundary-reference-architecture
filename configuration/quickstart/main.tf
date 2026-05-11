@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2020, 2026
+
 # This Terraform script for HCP/OSS Boundary sets up the basic Org, Project, and Target. 
 #
 # Prerequisites: The Boundary cluster must be deployed.
